@@ -5,20 +5,21 @@ class AuthController extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        // Load necessary libraries or helpers here
-        $this->load->library('session');
-        $this->load->helper('url');
+       
     }
 
     public function index() {
         // Default method, redirect to login
-        echo "Welcome to the AuthController!";
-        // redirect('authcontroller/login');
+        $this->login();
     }
 
     public function login() {
         // Load the login view
-        $this->load->view('auth/login');
+        $data = array(
+            'title' => "Login | E-kinerja",
+        );
+        
+        $this->load->view('auth/login', $data);
     }
 
     public function do_login() {

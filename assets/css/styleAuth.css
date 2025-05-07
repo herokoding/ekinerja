@@ -1,0 +1,108 @@
+/* Full-screen background image */
+body,
+html {
+	height: 100%;
+	margin: 0;
+}
+.bg {
+	position: relative;
+	background: url("https://asset.kompas.com/crops/UVfz4LQyaWHqhCHNEGJHhQLogmg=/0x19:1000x686/1200x800/data/photo/2022/07/10/62cae2314d495.jpg")
+		no-repeat center center fixed;
+	background-size: cover;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem;
+}
+/* Logo BKN top-left */
+.logo {
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	background: rgba(255, 255, 255, 0.3);
+	padding: 0.5rem;
+	border-radius: 0.5rem;
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+}
+.logo img {
+	height: 70px;
+	width: 60px;
+	display: block;
+}
+/* Title section with blurred background */
+.title-wrapper {
+	position: relative;
+	text-align: center;
+	margin-bottom: 1.5rem;
+	background: rgba(255, 255, 255, 0.2);
+	padding: 0.5rem 1.5rem;
+	border-radius: 1rem;
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+}
+.title-ekinerja {
+	font-size: 2.5rem;
+	font-weight: 700;
+	color: #ffffff;
+	margin: 0;
+}
+.title-ppnpn {
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: #ffffff;
+	margin: 0;
+	display: inline-block;
+	margin-left: 1rem;
+}
+/* Sign-in card */
+.card {
+	background: rgba(255, 255, 255, 0.9);
+	border: none;
+	border-radius: 1.5rem;
+	padding: 2rem;
+	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+	max-width: 400px;
+	width: 100%;
+}
+.card h3 {
+	position: relative;
+	padding-bottom: 0.5rem;
+}
+.card h3::after {
+	content: "";
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: 0;
+	width: 60%;
+	height: 4px;
+	background: linear-gradient(90deg, #8a2be2, #ff00ff);
+	border-radius: 2px;
+}
+/* Form control focus glow */
+.form-control:focus {
+	border-color: #8a2be2;
+	box-shadow: 0 0 5px rgba(138, 43, 226, 0.5);
+}
+/* Gradient button */
+.btn-primary {
+	background: linear-gradient(90deg, #8a2be2, #ff00ff);
+	border: none;
+	border-radius: 50px;
+	padding: 0.75rem;
+	font-weight: 600;
+}
+.btn-primary:hover {
+	background: linear-gradient(90deg, #7a1cd1, #e600e6);
+}
+/* Accent links */
+.form-link {
+	color: #9b30ff;
+}
+.form-link:hover {
+	color: #ff00ff;
+	text-decoration: none;
+}
