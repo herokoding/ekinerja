@@ -14,32 +14,73 @@ class AuthController extends CI_Controller {
     }
 
     public function login() {
-        // Load the login view
-        $data = array(
-            'title' => "Login | E-kinerja",
-        );
-        
-        $this->load->view('auth/login', $data);
-    }
+        // Validation
+        $this->form_validation->set_rules('username', 'Username', 'trim|required');
+        $this->form_validation->set_rules('user_password', 'Password', 'trim|required');
 
-    public function do_login() {
-        // Handle login logic here
-        $username = $this->input->post('username');
-        $password = $this->input->post('password');
+        if ($this->form_validation->run() == FALSE) {
+            // Load the login view
+            $data = array(
+                'title' => "Login | E-kinerja",
+            );
 
-        // Example: Simple authentication logic
-        if ($username === 'admin' && $password === 'password') {
-            $this->session->set_userdata('logged_in', true);
-            redirect('dashboard');
+            $this->load->view('auth/login', $data, FALSE);
         } else {
-            $this->session->set_flashdata('error', 'Invalid username or password');
-            redirect('authcontroller/login');
+            $this->_do_login();
         }
     }
+
+    private function _do_login() {
+    // 1. Ambil input
+        $username = $this->input->post('username');
+        $password = $this->input->post('user_password');
+
+    // 2. Query user
+        $user = $this->db->get_where('users', ['username' => $username])->row_array();
+
+        if ($user && $user['user_is_active'] == 1) {
+            $storedHash = $user['user_password'];
+            $isValid    = false;
+
+        // 3. Coba verifikasi modern (bcrypt/Argon2)
+            if (password_verify($password, $storedHash)) {
+                $isValid = true;
+            }
+        // 4. Fallback: cek MD5 legacy
+            elseif (md5($password) === $storedHash) {
+                $isValid = true;
+
+            // 5. Migrasi ke hash baru (bcrypt)
+                $newHash = password_hash($password, PASSWORD_DEFAULT);
+                $this->db->where('user_id', $user['user_id'])
+                ->update('users', ['user_password' => $newHash]);
+            }
+
+            if ($isValid) {
+            // 6. Set session dan redirect
+                $this->session->set_userdata([
+                    'user_email'    => $user['user_email'],
+                    'username'      => $user['username'],
+                    'role_id'       => $user['role_id'],
+                    'department_id' => $user['department_id']
+                ]);
+                redirect('AdminController','refresh');
+                return;
+            } 
+            else {
+                echo "Wrong password!";
+                return;
+            }
+        }
+
+    // Username tidak ditemukan atau belum aktif
+        echo isset($user) ? "Username not activated" : "Username not registered";
+    }
+
 
     public function logout() {
         // Destroy session and redirect to login
         $this->session->sess_destroy();
-        redirect('authcontroller/login');
+        redirect('AuthController', 'refresh');
     }
 }

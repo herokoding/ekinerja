@@ -27,14 +27,16 @@
         <!-- Sign In -->
         <div class="card">
             <h3 class="text-center mb-4">Sign In</h3>
-            <form action="" method="post">
+            <form action="<?= base_url('AuthController/login') ?>" method="post">
                 <div class="form-group">
-                    <label for="email">Email address</label>
-                    <input type="email" class="form-control" id="email" placeholder="Enter email">
+                    <label for="email">Username</label>
+                    <input type="text" class="form-control" name="username" id="username" value="<?= set_value('username') ?>">
+                    <?= form_error('username', '<small class="text-danger pl-3">', '</small>') ?>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Enter password">
+                    <input type="password" class="form-control" name="user_password" id="password">
+                    <?= form_error('user_password', '<small class="text-danger pl-3">', '</small>') ?>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Sign In</button>
                 <!-- <div class="text-center mt-3">
