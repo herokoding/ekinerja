@@ -59,12 +59,13 @@ class AuthController extends CI_Controller {
             if ($isValid) {
             // 6. Set session dan redirect
                 $this->session->set_userdata([
+                    'user_id'       => $user['user_id'],
                     'user_email'    => $user['user_email'],
                     'username'      => $user['username'],
                     'role_id'       => $user['role_id'],
                     'department_id' => $user['department_id']
                 ]);
-                redirect('AdminController','refresh');
+                redirect('admin/dashboard','refresh');
                 return;
             } 
             else {
@@ -81,6 +82,6 @@ class AuthController extends CI_Controller {
     public function logout() {
         // Destroy session and redirect to login
         $this->session->sess_destroy();
-        redirect('AuthController', 'refresh');
+        redirect('auth', 'refresh');
     }
 }

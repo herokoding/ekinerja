@@ -7,12 +7,15 @@ class AdminController extends CI_Controller {
 	{
 		parent::__construct();
 		//Do your magic here
+		$this->load->model('MenuModel', 'menu');
 	}
 
 	public function index()
 	{
 		$data = array(
-			'user' => $this->db->get_where('users', ['username' => $this->session->userdata('username')])->row_array(), 
+			'title' => "Ekinerja",
+			'user' => $this->db->get_where('users', ['username' => $this->session->userdata('username')])->row_array(),
+			'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
 		);
 
 		$this->load->view('main/header', $data, FALSE);
@@ -43,6 +46,32 @@ class AdminController extends CI_Controller {
         } else {
             echo "Sudah Login";
         }
+    }
+
+    public function listMenu()
+    {
+    	if ($this->form_validation->run() == FALSE) {
+    		$data = array(
+    			'title' => "List Data Menu",
+    			'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
+    		);
+
+    		$this->load->view('main/header', $data, FALSE);
+    		$this->load->view('main/navbar', $data, FALSE);
+    		$this->load->view('content/list-menu', $data, FALSE);
+    		$this->load->view('main/footer');
+    	} else {
+    		# code...
+    	}
+    }
+
+    public function api_get_menu()
+    {
+    	$menus = $this->menu->getDataMenu()->result_array();
+
+    	echo json_encode([
+    		'data' => $menus
+    	]);
     }
 }
 
