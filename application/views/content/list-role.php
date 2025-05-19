@@ -7,12 +7,12 @@
             <?= $this->session->flashdata('message'); ?>
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0"> List Data Menu</h1>
+                    <h1 class="m-0"> List Data Role</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Master</a></li>
-                        <li class="breadcrumb-item active">Data Menu</li>
+                        <li class="breadcrumb-item active">Data Role</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -27,18 +27,17 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Data Menu</h3>
+                            <h3 class="card-title">Data Role</h3>
                             <div class="float-right">
-                                <button type="button" class="btn btn-magenta btn-sm" data-toggle="modal" data-target="#addMenu"><i class="fas fa-plus"></i> Tambah Menu</button>
-                                <a href="<?= base_url('admin/listSubMenu') ?>" class="btn btn-info btn-sm"><i class="fas fa-folder-open"></i> Sub Menu Management</a>
+                                <button type="button" class="btn btn-magenta btn-sm" data-toggle="modal" data-target="#addRole"><i class="fas fa-plus"></i> Tambah Role</button>
                             </div>
                         </div>
                         <div class="card-body">
-                            <table id="tblMenu" class="table table-bordered table-hover">
+                            <table id="tblRole" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Menu Name</th>
+                                        <th>Role Name</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -46,7 +45,7 @@
                                 <tfoot>
                                     <tr>
                                         <th>#</th>
-                                        <th>Menu Name</th>
+                                        <th>Role Name</th>
                                         <th>Action</th>
                                     </tr>
                                 </tfoot>
@@ -59,25 +58,22 @@
         </div><!-- /.container-fluid -->
     </div>
     <!-- Add Menu Modal -->
-    <div class="modal fade" id="addMenu" tabindex="-1" role="dialog" aria-labelledby="addMenuLabel" aria-hidden="true">
+    <div class="modal fade" id="addRole" tabindex="-1" role="dialog" aria-labelledby="addRoleLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <!-- Header -->
           <div class="modal-header">
-            <h5 class="modal-title" id="addMenuLabel">Tambah Menu</h5>
+            <h5 class="modal-title" id="addRoleLabel">Tambah Role</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <!-- Body with Form -->
-          <form id="formAddMenu" method="post" action="<?= site_url('admin/addMenu') ?>">
+          <form id="formAddRole" method="post" action="<?= site_url('admin/addRole') ?>">
             <div class="modal-body">
               <div class="form-group">
-                <label for="menuName">Nama Menu</label>
-                <input type="text" class="form-control" id="menuName" name="menu_name" placeholder="Masukkan nama menu">
-                <div class="invalid-feedback">
-                  Mohon isi nama menu.
-                </div>
+                <label for="menuName">Nama Role</label>
+                <input type="text" class="form-control" id="roleName" name="role_name" placeholder="Masukkan nama role">
               </div>
             </div>
             <!-- Footer with Actions -->

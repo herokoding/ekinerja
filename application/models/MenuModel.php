@@ -21,6 +21,20 @@ class MenuModel extends CI_Model {
 		return $this->db->get('menus');
 	}
 
+	public function getDataSubMenu()
+	{
+		$this->db->select('sub.*, menu.menu_name');
+		$this->db->join('menus menu', 'menu.menu_id = sub.menu_id', 'left');
+		$this->db->order_by('sub.id', 'asc');
+
+		return $this->db->get('sub_menus sub');
+	}
+
+	public function FunctionName($value='')
+	{
+		// code...
+	}
+
 }
 
 /* End of file MenuModel.php */

@@ -25,6 +25,22 @@
 <script src="<?= base_url('assets/vendor/adminlte3') ?>/js/adminlte.min.js"></script>
 
 <!-- Additional Script -->
+<script>
+  $(document).ready(function() {
+    // Wait 4 seconds, then fade and slide up
+    window.setTimeout(function() {
+      $('.alert')
+        .fadeTo(500, 0)        // over 0.5 s fade to opacity 0
+        .slideUp(500, function() {
+          $(this).remove();    // then remove from the DOM
+        });
+    }, 4000);
+  });
+</script>
+<script>
+  const API_GET_MENU = "<?= site_url('admin/api/getMenu') ?>";
+  const API_GET_SUB_MENU = "<?= site_url('admin/api/getSubMenu') ?>";
+</script>
 <script src="<?= base_url('assets/js/myScript.js') ?>"></script>
 </body>
 

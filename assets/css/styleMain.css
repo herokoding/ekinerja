@@ -95,3 +95,10 @@
 	font-weight: 600;
 	color: #0062cc;
 }
+
+.btn-magenta {
+	color: #fff;
+    background-color: #cf11f3;
+    border-color: #8e29e3;
+    box-shadow: none;
+}
