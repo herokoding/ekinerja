@@ -30,9 +30,28 @@ class MenuModel extends CI_Model {
 		return $this->db->get('sub_menus sub');
 	}
 
-	public function FunctionName($value='')
+	public function getRole()
 	{
-		// code...
+		$this->db->order_by('role_id', 'asc');
+
+		return $this->db->get('roles');
+	}
+
+	public function getDepart()
+	{
+		$this->db->order_by('depart_id', 'asc');
+
+		return $this->db->get('departments');
+	}
+
+	public function getDataUsers()
+	{
+		$this->db->select('user.*, role.role_name, depart.depart_name');
+		$this->db->join('roles role', 'role.role_id = user.role_id', 'left');
+		$this->db->join('departments depart', 'depart.depart_id = user.department_id', 'left');
+		$this->db->order_by('user.user_id', 'asc');
+
+		return $this->db->get('users user');
 	}
 
 }

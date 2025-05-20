@@ -40,6 +40,9 @@
 <script>
   const API_GET_MENU = "<?= site_url('admin/api/getMenu') ?>";
   const API_GET_SUB_MENU = "<?= site_url('admin/api/getSubMenu') ?>";
+  const API_GET_ROLE = "<?= site_url('admin/api/getRole') ?>";
+  const API_GET_DEPART = "<?= site_url('admin/api/getDepart') ?>";
+  const API_GET_USER = "<?= site_url('admin/api/getUser') ?>";
 </script>
 <script src="<?= base_url('assets/js/myScript.js') ?>"></script>
 </body>

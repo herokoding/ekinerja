@@ -4,14 +4,20 @@
 $route['admin/api/getMenu']['get'] = 'AdminController/api_get_menu';
 $route['admin/api/getRole']['get'] = 'AdminController/api_get_role';
 $route['admin/api/getSubMenu']['get'] = 'AdminController/api_get_sub_menu';
+$route['admin/api/getDepart']['get'] = 'AdminController/api_get_department';
+$route['admin/api/getUser']['get'] = 'AdminController/api_get_users';
 
 // Admin Routes
 $route['admin/dashboard'] = 'AdminController/index';
 $route['admin/listMenu'] = 'AdminController/listMenu';
 $route['admin/listSubMenu'] = 'AdminController/listSubMenu';
 $route['admin/listRole'] = 'AdminController/listRole';
+$route['admin/listDepart'] = 'AdminController/listDepart';
+$route['admin/listUser'] = 'AdminController/listUser';
 $route['admin/addMenu']['post'] = 'AdminController/listMenu';
 $route['admin/addSubMenu']['post'] = 'AdminController/listSubMenu';
+$route['admin/addRole']['post'] = 'AdminController/listRole';
+$route['admin/addUser']['post'] = 'AdminController/listUser';
 
 // Auth Routes
 $route['auth'] = 'AuthController/index';

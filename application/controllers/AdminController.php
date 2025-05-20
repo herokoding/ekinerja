@@ -24,7 +24,7 @@ class AdminController extends CI_Controller {
 		$this->load->view('main/footer');
 	}
 
-	public function registration_user()
+	public function listUser()
     {
     	$this->form_validation->set_rules('user_email', 'Email', 'trim|required|valid_email|is_unique[users.user_email]', [
     		'is_unique' => "This Email has been registered!"
@@ -40,9 +40,15 @@ class AdminController extends CI_Controller {
 
         if ($this->form_validation->run() == FALSE) {
             $data = array(
-                'title' => "Form User Registration", 
+                'title' => "List Data User",
+                'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
+                'role' => $this->menu->getRole()->result_array(),
+                'department' => $this->menu->getDepart()->result_array(),
             );
-            $this->load->view('admin/register_user', $data, FALSE);
+            $this->load->view('main/header', $data, FALSE);
+            $this->load->view('main/navbar', $data, FALSE);
+            $this->load->view('content/list-user', $data, FALSE);
+            $this->load->view('main/footer');
         } else {
             echo "Sudah Login";
         }
@@ -127,6 +133,28 @@ class AdminController extends CI_Controller {
 
     }
 
+    public function listDepart()
+    {
+        $this->form_validation->set_rules('depart_name', 'Nama Department', 'required');
+
+        if ($this->form_validation->run() == FALSE) {
+            $data = array(
+                'title' => "List Data Department",
+                'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
+            );
+
+            $this->load->view('main/header', $data, FALSE);
+            $this->load->view('main/navbar', $data, FALSE);
+            $this->load->view('content/list-depart', $data, FALSE);
+            $this->load->view('main/footer');
+        } else {
+            $this->db->insert('departments', ['depart_name' => $this->input->post('depart_name')]);
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">New department added!</div>');
+
+            redirect('admin/listDepart','refresh');
+        }
+    }
+
     public function api_get_menu()
     {
     	$menus = $this->menu->getDataMenu()->result_array();
@@ -136,6 +164,24 @@ class AdminController extends CI_Controller {
     	]);
     }
 
+    public function api_get_users()
+    {
+        $users = $this->menu->getDataUsers()->result_array();
+
+        echo json_encode([
+            'data' => $users
+        ]);
+    }
+
+    public function api_get_role()
+    {
+        $roles = $this->menu->getRole()->result_array();
+
+        echo json_encode([
+            'data' => $roles
+        ]);
+    }
+
     public function api_get_sub_menu()
     {
     	$submenu = $this->menu->getDataSubMenu()->result_array();
@@ -143,6 +189,15 @@ class AdminController extends CI_Controller {
     	echo json_encode([
     		'data' => $submenu
     	]);
+    }
+
+    public function api_get_department()
+    {
+        $department = $this->menu->getDepart()->result_array();
+
+        echo json_encode([
+            'data' => $department
+        ]);
     }
 }
 
