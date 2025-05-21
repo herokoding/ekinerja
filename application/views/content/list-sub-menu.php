@@ -78,7 +78,7 @@
             </button>
           </div>
           <!-- Body with Form -->
-          <form id="formAddSubMenu" method="post" action="<?= site_url('admin/addMenu') ?>">
+          <form id="formAddSubMenu" method="post" action="<?= site_url('admin/addSubMenu') ?>">
             <div class="modal-body">
               <div class="form-group">
                 <label for="menuName">Nama Sub Menu</label>

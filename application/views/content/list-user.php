@@ -84,37 +84,42 @@
             </button>
           </div>
           <!-- Body with Form -->
-          <form id="formAddUser" method="post" action="<?= site_url('admin/addUser') ?>" class="form-horizontal">
+          <form id="formAddUser" class="form-horizontal" method="post" action="<?= site_url('admin/addUser') ?>">
             <div class="modal-body">
-                <div class="col-md-12">
+                <div class="container row">
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label>NIK</label>
                             <input type="text" class="form-control" name="user_nik" id="nik">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label for="">Nama Lengkap</label>
                             <input type="text" class="form-control" name="user_fullname" id="fullname">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label for="">Email</label>
                             <input type="text" class="form-control" name="user_email" id="email">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label for="">Username</label>
                             <input type="text" class="form-control" name="username" id="username">
                         </div>
-                        <div class="form-group">
-                            <label for="">Password</label>
-                            <input type="password" class="form-control" name="password1" id="pw1">
-                        </div>
-                        <div class="form-group">
-                            <label for="">Confirm Password</label>
-                            <input type="password" class="form-control" name="password2" id="pw2">
+                        <div class="form-group row">
+                            <label class="col-sm-12 col-form-label">Gender</label>
+                            <div class="col-sm-4">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="user_gender" id="genderL" value="L">
+                                    <label class="form-check-label" for="genderL">Laki-laki</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="user_gender" id="genderP" value="P">
+                                    <label class="form-check-label" for="genderP">Perempuan</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label for="">Role</label>
                             <select name="role_id" id="roleId" class="form-control">
                                 <option value="">Select</option>
@@ -123,7 +128,7 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label for="">Department</label>
                             <select name="department_id" id="departId" class="form-control">
                                 <option value="">Select</option>
@@ -131,6 +136,14 @@
                                     <option value="<?= $item['depart_id'] ?>"><?= $item['depart_name'] ?></option>
                                 <?php endforeach; ?>
                             </select>
+                        </div>
+                        <div class="form-group row">
+                            <label for="">Password</label>
+                            <input type="password" class="form-control" name="password1" id="pw1">
+                        </div>
+                        <div class="form-group row">
+                            <label for="">Confirm Password</label>
+                            <input type="password" class="form-control" name="password2" id="pw2">
                         </div>
                     </div>
                 </div>

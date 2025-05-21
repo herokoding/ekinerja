@@ -50,7 +50,24 @@ class AdminController extends CI_Controller {
             $this->load->view('content/list-user', $data, FALSE);
             $this->load->view('main/footer');
         } else {
-            echo "Sudah Login";
+            $data = [
+                'user_nik' => $this->input->post('user_nik'),
+                'user_fullname' => $this->input->post('user_fullname'),
+                'user_email' => $this->input->post('user_email'),
+                'username' => $this->input->post('username'),
+                'user_password' => password_hash($this->input->post('password1'), PASSWORD_DEFAULT),
+                'role_id' => $this->input->post('role_id'),
+                'department_id' => $this->input->post('department_id'),
+                'user_is_active' => 1,
+                'user_gender' => $this->input->post('user_gender'),
+                'is_supervisor' => 0,
+                'created_date' => time(),
+            ];
+
+            $this->db->insert('users', $data);
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">New User added!</div>');
+
+            redirect('admin/listUser','refresh');
         }
     }
 
