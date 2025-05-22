@@ -19,6 +19,9 @@ $route['admin/addSubMenu']['post'] = 'AdminController/listSubMenu';
 $route['admin/addRole']['post'] = 'AdminController/listRole';
 $route['admin/addUser']['post'] = 'AdminController/listUser';
 
+// Kinerja Routes
+$route['kinerja/listsKinerja'] = 'KinerjaController/index';
+
 // Auth Routes
 $route['auth'] = 'AuthController/index';
 $route['auth/logout'] = 'AuthController/logout';
