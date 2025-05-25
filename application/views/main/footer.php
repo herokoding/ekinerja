@@ -14,6 +14,8 @@
 
 <!-- jQuery -->
 <script src="<?= base_url('assets/vendor/adminlte3') ?>/plugins/jquery/jquery.min.js"></script>
+<!-- Popper -->
+<script src="<?= base_url('assets/vendor/adminlte3') ?>/plugins/popper/umd/popper.js"></script>
 <!-- Bootstrap 4 -->
 <script src="<?= base_url('assets/vendor/adminlte3') ?>/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- DataTables  & Plugins -->
@@ -21,6 +23,15 @@
 <script src="<?= base_url('assets/vendor/adminlte3') ?>/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="<?= base_url('assets/vendor/adminlte3') ?>/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="<?= base_url('assets/vendor/adminlte3') ?>/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<!-- Fontawesome -->
+<script src="<?= base_url('assets/vendor/fontawesome-5') ?>/js/fontawesome.js"></script>
+<!-- InputMask -->
+<script src="<?= base_url('assets/vendor/adminlte3') ?>/plugins/moment/moment.min.js"></script>
+<script src="<?= base_url('assets/vendor/adminlte3') ?>/plugins/inputmask/jquery.inputmask.min.js"></script>
+<!-- date-range-picker -->
+<script src="<?= base_url('assets/vendor/adminlte3') ?>/plugins/daterangepicker/daterangepicker.js"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="<?= base_url('assets/vendor/adminlte3') ?>/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 <!-- AdminLTE App -->
 <script src="<?= base_url('assets/vendor/adminlte3') ?>/js/adminlte.min.js"></script>
 
@@ -43,6 +54,8 @@
   const API_GET_ROLE = "<?= site_url('admin/api/getRole') ?>";
   const API_GET_DEPART = "<?= site_url('admin/api/getDepart') ?>";
   const API_GET_USER = "<?= site_url('admin/api/getUser') ?>";
+  const API_GET_PERFORMANCE = "<?= site_url('kinerja/api/getListKinerja') ?>";
+  const API_EDIT_PERFORMANCE = "<?= site_url('kinerja/api/editKinerja/') ?>";
 </script>
 <script src="<?= base_url('assets/js/myScript.js') ?>"></script>
 </body>

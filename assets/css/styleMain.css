@@ -102,3 +102,29 @@
     border-color: #8e29e3;
     box-shadow: none;
 }
+
+.file-preview {
+    text-align: center;
+    padding: 8px;
+}
+
+.file-icon {
+    margin-bottom: 5px;
+}
+
+/* Ukuran ikon lebih kecil */
+.fa-2x {
+    font-size: 1.5em !important; /* Default fa-2x adalah 2em, kita perkecil */
+}
+
+.file-name {
+    font-size: 0.65rem;
+    color: #6c757d;
+    word-break: break-word;
+}
+
+.file-actions .btn-xs {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.7rem;
+    margin: 2px;
+}

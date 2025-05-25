@@ -14,6 +14,10 @@
     <link rel="stylesheet" href="<?= base_url('assets/vendor/adminlte3') ?>/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="<?= base_url('assets/vendor/adminlte3') ?>/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="<?= base_url('assets/vendor/adminlte3') ?>/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/adminlte3') ?>/plugins/daterangepicker/daterangepicker.css">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/adminlte3') ?>/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="<?= base_url('assets/vendor/adminlte3/css/adminlte.min.css') ?>">
     <!-- Custom -->
