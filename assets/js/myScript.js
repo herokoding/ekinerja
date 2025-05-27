@@ -370,78 +370,101 @@ $(function () {
 		],
 	});
 
-	tblKinerja.on('click', '.edit-btn-kinerja', function() {
-		var id = $(this).data('id');
-		console.log('Edit button clicked, ID:', id);
+	tblKinerja.off('click', '.edit-btn-kinerja').on('click', '.edit-btn-kinerja', function() {
+		const id = $(this).data('id');
+		console.log('[Init] Edit ID:', id);
+
+		$('#editModal').find('input, textarea').val('');
 
 		$.ajax({
 			url: API_EDIT_PERFORMANCE + id,
 			type: 'GET',
 			dataType: 'json',
-
-			beforeSend: function() {
-				console.log('Sending request to:', API_EDIT_PERFORMANCE + id);
-			},
-
 			success: function(response) {
-				console.log('Full response:', response);
+				try {
+					if (!response || typeof response !== 'object') throw new Error("Invalid server response");
+					if (!response.success) throw new Error(response.message || "Server returned failure");
+					if (!response.data || typeof response.data !== 'object') throw new Error("Invalid data structure");
 
-				if (response && response.success) {
-					console.log('Response data:', response.data);
-					console.log('Response document:', response.document);
-
-					$('#editRecordId').val(response.data.record_id || '');
-					$('#kinerjaDate input').val(response.data.record_date || '');
-					$('#recordDesc').val(response.data.record_desc || '');
-
-					if (response.document) {
-						console.log('Document path:', response.document.document_path);
-						var fileLink = `<a href="${response.document.document_path}" target="_blank">
-                        <i class="far fa-file-alt"></i> ${response.document.document_name}
-						</a>`;
-						$('#currentFile').html('File saat ini: ' + fileLink);
-					} else {
-						console.log('No document found');
-						$('#currentFile').html('Tidak ada file');
-					}
-
-					$('#kinerjaDate').datetimepicker('destroy');
-					$('#kinerjaDate').datetimepicker({
-						format: 'YYYY-MM-DD'
-					});
+					console.log('[Response]', response);
 
 					$('#editModal').modal('show');
-				} else {
-					console.error('Invalid response format:', response);
-					alert('Gagal memuat data: ' + (response.message || 'Format response tidak valid'));
+
+					$('#editModal').one('shown.bs.modal', function() {
+						console.log('[Modal Shown] Filling form...');
+
+						$('#editRecordId').val(response.data.record_id);
+						$('#recordDesc').val(response.data.record_desc);
+						console.log('record_desc value:', $('#recordDesc').val());
+
+						if (response.data.record_date) {
+							const dateObj = new Date(response.data.record_date);
+							
+							if (!isNaN(dateObj.getTime())) { 
+								const formattedDate = formatDateForInput(dateObj);
+								$('#kinerjaDate').val(formattedDate);
+								
+								const timeString = dateObj.toTimeString().split(' ')[0];
+								$('#originalTime').val(timeString);
+								
+								console.log('Date set:', formattedDate, 
+									'Input value:', $('#kinerjaDate').val());
+							} else {
+								console.error('Invalid date:', response.data.record_date);
+							}
+						} else {
+							console.warn('record_date is missing or null');
+						}
+
+						if (response.document) {
+							$('#currentFile').html(`
+                            <a href="${response.document.document_path}" target="_blank">
+                                <i class="far fa-file-alt"></i> ${response.document.document_name}
+                            </a>
+							`);
+						}
+					});
+
+				} catch (error) {
+					console.error('[Critical Error]', error);
+					alert(`Gagal memproses: ${error.message}`);
+					$('#editModal').modal('show');
 				}
 			},
-
-			error: function(xhr, status, error) {
-				console.error('AJAX Error:', status, error);
-				console.error('Response text:', xhr.responseText);
-				alert('Terjadi kesalahan saat memuat data. Lihat console untuk detail.');
+			error: function(xhr) {
+				console.error('[AJAX Error]', {
+					status: xhr.status,
+					response: xhr.responseText
+				});
+				alert(`Error ${xhr.status}: Gagal mengambil data`);
 			}
 		});
 	});
 
-	$('#kinerjaDate').datetimepicker({
-		format: 'YYYY/MM/DD HH:mm:ss',
-		useCurrent: false,
-		icons: {
-			time: 'fas fa-clock',
-			date: 'fas fa-calendar-alt',
-			up: 'fas fa-arrow-up',
-			down: 'fas fa-arrow-down',
-			previous: 'fas fa-chevron-left',
-			next: 'fas fa-chevron-right',
-			today: 'fas fa-calendar-check',
-			clear: 'fas fa-trash',
-			close: 'fas fa-times'
-		}
-	}).on('change.datetimepicker', function(e) {
-		if (e.date) {
-			$('input[name="record_date"]').val(e.date.format('YYYY-MM-DD HH:mm:ss'));
-		}
-	});
+	function formatDateForInput(date) {
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+		return `${year}-${month}-${day}`;
+	}
+
+	// $('#kinerjaDate').datetimepicker({
+	// 	format: 'YYYY/MM/DD HH:mm:ss',
+	// 	useCurrent: false,
+	// 	icons: {
+	// 		time: 'fas fa-clock',
+	// 		date: 'fas fa-calendar-alt',
+	// 		up: 'fas fa-arrow-up',
+	// 		down: 'fas fa-arrow-down',
+	// 		previous: 'fas fa-chevron-left',
+	// 		next: 'fas fa-chevron-right',
+	// 		today: 'fas fa-calendar-check',
+	// 		clear: 'fas fa-trash',
+	// 		close: 'fas fa-times'
+	// 	}
+	// }).on('change.datetimepicker', function(e) {
+	// 	if (e.date) {
+	// 		$('input[name="record_date"]').val(e.date.format('YYYY-MM-DD HH:mm:ss'));
+	// 	}
+	// });
 });

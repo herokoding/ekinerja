@@ -99,17 +99,36 @@ class KinerjaController extends CI_Controller {
 
 	public function api_get_row_kinerja($id)
 	{
-		$rowKinerja = $this->kinerja->getRowById($id)->row_array();
+		if (!is_numeric($id)) {
+			echo json_encode([
+				'success' => false,
+				'message' => 'ID tidak valid'
+			]);
+			return;
+		}
+		
+		$rowKinerja = $this->kinerja->getRowById($id);
 
-		if($rowKinerja) {
+		$response = [
+			'success' => false,
+			'message' => 'Data tidak ditemukan',
+			'data' => null,
+			'document' => null
+		];
+
+		if ($rowKinerja) {
 			$response = [
 				'success' => true,
-				'data' => $rowKinerja,
-			];
-		} else {
-			$response = [
-				'success' => false,
-				'message' => 'Data tidak ditemukan'
+				'message' => 'Data ditemukan',
+				'data' => [
+					'record_id' => $rowKinerja['record_id'],
+					'record_date' => $rowKinerja['record_date'],
+					'record_desc' => $rowKinerja['record_desc'] ?? ''
+				],
+				'document' => [
+					'document_name' => $rowKinerja['document_name'] ?? null,
+					'document_path' => $rowKinerja['document_path'] ?? null
+				]
 			];
 		}
 

@@ -7,7 +7,7 @@ $route['admin/api/getSubMenu']['get'] = 'AdminController/api_get_sub_menu';
 $route['admin/api/getDepart']['get'] = 'AdminController/api_get_department';
 $route['admin/api/getUser']['get'] = 'AdminController/api_get_users';
 $route['kinerja/api/getListKinerja']['get'] = 'KinerjaController/api_get_lists';
-$route['kinerja/api/editKinerja/(:any)']['get'] = 'KinerjaController/api_get_row_kinerja/$1';
+$route['kinerja/api/editKinerja/(:num)']['get'] = 'KinerjaController/api_get_row_kinerja/$1';
 
 // Admin Routes
 $route['admin/dashboard'] = 'AdminController/index';
