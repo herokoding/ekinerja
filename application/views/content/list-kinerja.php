@@ -91,13 +91,14 @@
             <form id="formAddKinerja" method="post" action="<?= site_url('kinerja/listKinerja') ?>" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="kinerjaDate">Tanggal Kinerja</label>
-                        <div class="input-group date" id="kinerjaDate" data-target-input="nearest">
-                            <input name="record_date" type="text" class="form-control datetimepicker-input" data-target="#kinerjaDate"/>
-                            <div class="input-group-append" data-target="#kinerjaDate" data-toggle="datetimepicker">
-                                <div class="input-group-text"><i class="fas fa-calendar"></i></div>
-                            </div>
+                        <label>Tanggal Kinerja</label>
+                        <div class="input-group date" id="addkinerjaDate" data-target-input="nearest">
+                          <input type="text" class="form-control datetimepicker-input"
+                          data-target="#addkinerjaDate" name="record_date"/>
+                          <div class="input-group-append" data-target="#addkinerjaDate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fas fa-calendar"></i></div>
                         </div>
+                    </div>
                     </div>
                     <div class="form-group">
                         <label for="">Uraian Kinerja</label>
@@ -132,15 +133,15 @@
                 <form id="editForm" enctype="multipart/form-data">
                     <div class="modal-body">
                         <input type="hidden" name="record_id" id="editRecordId">
-                         <input type="text" id="originalTime">
-
+                        
                         <div class="form-group">
                             <label for="kinerjaDate">Tanggal Kinerja</label>
-                            <input type="date" 
-                            class="form-control" 
-                            id="kinerjaDate" 
-                            name="record_date"
-                            required>
+                            <div class="input-group date" id="editkinerjaDate" data-target-input="nearest">
+                              <input type="text" class="form-control datetimepicker-input" data-target="#editkinerjaDate" name="record_date"/>
+                              <div class="input-group-append" data-target="#editkinerjaDate" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                            </div>
+                        </div>
                         </div>
                         <div class="form-group">
                             <label>Uraian Kinerja</label>

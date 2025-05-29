@@ -47,54 +47,67 @@ class KinerjaController extends CI_Controller {
 
 				$config['upload_path']   = './uploads/documents/';
 				$config['allowed_types'] = 'pdf|doc|docx|xlsx|txt|jpg|png';
-            	$config['max_size']      = 2048;
+				$config['max_size']      = 2048;
 
-            	if (!is_dir($config['upload_path']) || !is_writable($config['upload_path'])) {
-            		show_error('Upload folder tidak ada atau tidak memiliki permission write.');
-            	}
+				if (!is_dir($config['upload_path']) || !is_writable($config['upload_path'])) {
+					show_error('Upload folder tidak ada atau tidak memiliki permission write.');
+				}
 
-            	$this->upload->initialize($config);
+				$this->upload->initialize($config);
 
-            	if (!$this->upload->do_upload('document_name')) {
-            		$errorUpload = $this->upload->display_errors('', '');
-            		log_message('error', 'Upload Error:' . $errorUpload);
-            		$this->session->set_flashdata('upload_error', $errorUpload);
+				if (!$this->upload->do_upload('document_name')) {
+					$errorUpload = $this->upload->display_errors('', '');
+					log_message('error', 'Upload Error:' . $errorUpload);
+					$this->session->set_flashdata('upload_error', $errorUpload);
 
-            		redirect('kinerja/listKinerja');
-            	} else {
-            		$uploadedData = $this->upload->data();
+					redirect('kinerja/listKinerja');
+				} else {
+					$uploadedData = $this->upload->data();
 
-            		$fileName = $uploadedData['file_name'];
+					$fileName = $uploadedData['file_name'];
 
-            		$this->db->insert('document_records', [
-            			'record_id' => $id,
-            			'document_name' => $fileName,
-            			'document_path' => 'uploads/documents/' . $fileName,
-            			'uploaded_by' => $this->session->userdata('user_id'),
-            			'uploaded_at' => date('Y-m-d H:i:s'),
-            		]);
+					$this->db->insert('document_records', [
+						'record_id' => $id,
+						'document_name' => $fileName,
+						'document_path' => 'uploads/documents/' . $fileName,
+						'uploaded_by' => $this->session->userdata('user_id'),
+						'uploaded_at' => date('Y-m-d H:i:s'),
+					]);
 
-            		$this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">New Performance added!</div>');
+					$this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">New Performance added!</div>');
 
-            		redirect('kinerja/listKinerja','refresh');
-            	}
-        	}
-    	}
+					redirect('kinerja/listKinerja','refresh');
+				}
+			}
+		}
+	}
+
+	public function checkStatus()
+	{
+		$data = [
+			'title' => "Status Approval",
+			'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
+		];
+
+		$this->load->view('main/header', $data, FALSE);
+		$this->load->view('main/navbar', $data, FALSE);
+		$this->load->view('content/checklist-kinerja', $data, FALSE);
+		$this->load->view('main/footer');
 	}
 
 	public function api_get_lists()
 	{
 		$listKinerja = $this->kinerja->getLists()->result_array();
 
-    	foreach ($listKinerja as &$item) { 
-    		$item['document_path'] = !empty($item['document_name']) ? base_url('uploads/documents/' . $item['document_name']) : '';
-    	}
+		foreach ($listKinerja as &$item) { 
+			$item['document_path'] = !empty($item['document_name']) ? base_url('uploads/documents/' . $item['document_name']) : '';
+		}
 
-    	unset($item);
-	
-    	$this->output
-    	->set_content_type('application/json')
-    	->set_output(json_encode(['data' => $listKinerja]));
+		unset($item);
+
+		$this->output
+		->set_content_type('application/json')
+		->set_output(json_encode(['data' => $listKinerja]));
 	}
 
 	public function api_get_row_kinerja($id)
@@ -136,6 +149,90 @@ class KinerjaController extends CI_Controller {
 		->set_content_type('application/json')
 		->set_output(json_encode($response));
 	}
+
+	public function api_update_kinerja($id)
+	{
+		if (!is_numeric($id)) {
+			log_message('error', "Invalid ID for update: $id");
+			return $this->output
+			->set_content_type('application/json')
+			->set_output(json_encode([
+				'success' => false,
+				'message' => 'ID tidak valid'
+			]));
+		}
+
+		$response = ['success' => false, 'message' => 'Update gagal'];
+
+        // Fetch existing record
+		$row = $this->kinerja->getRowById($id);
+		if (!$row) {
+			log_message('debug', "No existing record for ID: $id");
+			$response['message'] = 'Data tidak ditemukan';
+			return $this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($response));
+		}
+
+        // Gather inputs
+		$record_desc = $this->input->post('record_desc');
+		$record_date = $this->input->post('record_date');
+		log_message('debug', "Updating ID $id with desc='$record_desc' date='$record_date'");
+
+		$perfData = [
+			'record_desc' => $record_desc,
+			'record_date' => $record_date
+		];
+		$docData = null;
+
+        // Handle file upload
+		if (!empty($_FILES['document_name']['name'])) {
+			$config = [
+				'upload_path'   => './uploads/kinerja/',
+				'allowed_types' => 'pdf|doc|docx|xls|xlsx|jpg|jpeg|png|gif',
+				'max_size'      => 2048
+			];
+			$this->load->library('upload', $config);
+
+			if ($this->upload->do_upload('document_name')) {
+				$u = $this->upload->data();
+				$docData = [
+					'document_name' => $u['file_name'],
+					'document_path' => base_url('uploads/kinerja/' . $u['file_name'])
+				];
+				log_message('debug', "File uploaded: {$u['file_name']}");
+
+				if (!empty($row['document_name'])) {
+					$old = FCPATH . 'uploads/kinerja/' . $row['document_name'];
+					if (file_exists($old)) {
+						unlink($old);
+						log_message('debug', "Old file deleted: {$row['document_name']}");
+					}
+				}
+			} else {
+				$error = $this->upload->display_errors('', '');
+				log_message('error', "Upload error: $error");
+				$response['message'] = $error;
+				return $this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($response));
+			}
+		}
+
+        // Perform update via model
+		$updated = $this->kinerja->updateById($id, $perfData, $docData);
+		log_message('debug', "Model updateById returned: " . ($updated ? 'true' : 'false'));
+		if ($updated) {
+			$response = ['success' => true, 'message' => 'Data berhasil diperbarui'];
+		} else {
+			$response['message'] = 'Query gagal dijalankan';
+		}
+
+		return $this->output
+		->set_content_type('application/json')
+		->set_output(json_encode($response));
+	}
+
 
 }
 

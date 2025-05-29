@@ -30,7 +30,27 @@ $(function () {
 		}
 	}
 
-	
+	console.log('Moment.js:', moment?.version);
+	console.log('jQuery:', $.fn.jquery);
+	console.log('Datetimepicker plugin:', $.fn.datetimepicker ? 'available' : 'missing');
+
+  // Fade out alerts
+	setTimeout(() => {
+		$('.alert').fadeTo(500, 0).slideUp(500, function() { $(this).remove(); });
+	}, 4000);
+
+	// Initialize datetimepicker for Add form (wrapper id: addkinerjaDate)
+	$('#addkinerjaDate').datetimepicker({
+		format: 'YYYY-MM-DD HH:mm:ss',
+		useCurrent: false,
+		allowInputToggle: true,
+		widgetPositioning: {horizontal: 'auto', vertical: 'bottom'},
+		icons: {
+			time: 'fas fa-clock', date: 'fas fa-calendar', up: 'fas fa-arrow-up',
+			down: 'fas fa-arrow-down', previous: 'fas fa-chevron-left', next: 'fas fa-chevron-right',
+			today: 'fas fa-calendar-check', clear: 'fas fa-trash', close: 'fas fa-times'
+		}
+	});
 
 	$('#tblMenu').DataTable({
 		"processing": true,
@@ -254,217 +274,149 @@ $(function () {
 		]
 	});
 
-	var tblKinerja = $('#tblKinerja').DataTable({
-		"processing": true,
-		"responsive": true,
-
-		"ajax": {
-			"url": API_GET_PERFORMANCE,
-			"type": 'GET',
+	// --- Initialize Datatable ---
+	const tblKinerja = $('#tblKinerja').DataTable({
+		processing: true,
+		responsive: true,
+		ajax: {
+			url: API_GET_PERFORMANCE,
+			type: 'GET',
 			dataSrc: function(json) {
-				if (!json || !json.data) {
-					console.error('Unexpected JSON structure:', json);
-					return [];
-				}
-				return json.data;
+				return (json && json.data) ? json.data : [];
 			},
-			error: function(xhr, status, error) {
-				console.error('AJAX Error:', status, error);
-				console.error('Response:', xhr.responseText);
+			error: (xhr, status, error) => console.error('AJAX Error:', status, error)
+		},
+		columns: [
+			{ data: 'record_id', orderable: false, searchable: false,
+				render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1
+			},
+			{ data: 'record_date', render: (raw, type) => type === 'display' ? moment(raw).format('DD MMM YYYY') : raw },
+			{ data: 'record_desc' },
+			{ data: 'document_path', orderable: false, searchable: false,
+				render: (path, type) => {
+					if (type !== 'display') return path;
+					if (!path) return '<span class="text-muted">–</span>';
+					const ext = path.split('.').pop().toLowerCase();
+					const name = path.split('/').pop();
+					let icon = 'fa-file-alt', color = 'text-secondary';
+					if (ext === 'pdf') { icon = 'fa-file-pdf'; color = 'text-danger'; }
+					if (['doc','docx'].includes(ext)) { icon = 'fa-file-word'; color = 'text-primary'; }
+					if (['xls','xlsx'].includes(ext)) { icon = 'fa-file-excel'; color = 'text-success'; }
+					if (['jpg','jpeg','png','gif'].includes(ext)) { icon = 'fa-file-image'; color = 'text-info'; }
+					return `<div class="file-preview">
+                    <div class="file-icon ${color}"><i class="far ${icon} fa-2x"></i>
+                      <small class="file-name d-block">${name}</small>
+                    </div>
+                    <div class="file-actions mt-2">
+                      <a href="${path}" target="_blank" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye"></i> Lihat
+                      </a>
+                      <a href="${path}" download class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-download"></i> Unduh
+                      </a>
+                    </div>
+				</div>`;
 			}
 		},
+		{ data: null, orderable: false, searchable: false,
+			render: row =>
+			`<button class="btn btn-sm btn-primary edit-btn-kinerja" data-id="${row.record_id}" data-toggle="modal" data-target="#editModal">Edit</button>
+			<button class="btn btn-sm btn-danger delete-btn-kinerja" data-id="${row.record_id}">Hapus</button>`
+		}
+	]
+});
 
-		"columns": [
-			{
-				data: "record_id",
-				orderable: false,
-				searchable: false,
-				render: function (data, type, row, meta) {
-					return meta.row + meta.settings._iDisplayStart + 1;
-				}
-			},
-			{
-				data: "record_date",
-				render: function (rawDate, type, row) {
-					if (type !== 'display') {
-						return rawDate;
-					}
-					return moment(rawDate).format('DD MMM YYYY');
-				}
-			},
-			{
-				data: "record_desc"
-			},
-			{
-				data: 'document_path',    // gunakan 'document_path' untuk URL
-				orderable: false,
-				searchable: false,
-				render: function(path, type, row, meta) {
-					if (type !== 'display') {
-						return path;
-					}
-					if (!path) {
-						return '<span class="text-muted">–</span>';
-					}
+	let editPickerInitialized = false;
+	let pendingDate = null;
 
-					const fileExt = path.split('.').pop().toLowerCase();
-					const fileName = path.split('/').pop();
+	$('#tblKinerja tbody').on('click', '.edit-btn-kinerja', function() {
+		const id = $(this).data('id');
+		pendingDate = null;
+		const $form = $('#editForm');
+		$form[0].reset();
+		$('#currentFile').empty();
 
-					let fileIcon, iconColor;
-					switch(fileExt) {
-					case 'pdf':
-						fileIcon = 'fa-file-pdf';
-						iconColor = 'text-danger';
-						break;
-					case 'doc':
-					case 'docx':
-						fileIcon = 'fa-file-word';
-						iconColor = 'text-primary';
-						break;
-					case 'xls':
-					case 'xlsx':
-						fileIcon = 'fa-file-excel';
-						iconColor = 'text-success';
-						break;
-					case 'jpg':
-					case 'jpeg':
-					case 'png':
-					case 'gif':
-						fileIcon = 'fa-file-image';
-						iconColor = 'text-info';
-						break;
-					default:
-						fileIcon = 'fa-file-alt';
-						iconColor = 'text-secondary';
-					}
-
-					return `
-            			<div class="file-preview">
-            			    <div class="file-icon ${iconColor}">
-            			        <i class="far ${fileIcon} fa-2x"></i>
-            			        <small class="file-name d-block">${fileName}</small>
-            			    </div>
-            			    <div class="file-actions mt-2">
-            			        <a href="${path}" target="_blank" class="btn btn-sm btn-outline-primary">
-            			            <i class="fas fa-eye"></i> Lihat
-            			        </a>
-            			        <a href="${path}" download class="btn btn-sm btn-outline-secondary">
-            			            <i class="fas fa-download"></i> Unduh
-            			        </a>
-            			    </div>
-            			</div>
-					`;
-				}
-			},
-			{
-				data: null,
-				orderable: false,
-				searchable: false,
-				render: function (row) {
-					return `<button class="btn btn-sm btn-primary edit-btn-kinerja" data-id="${row.record_id}" data-toggle="modal" data-target="#editModal">
-						Edit</button>
-            		<button class="btn btn-sm btn-danger delete-btn-kinerja" data-id="${row.record_id}">
-					Hapus</button>`;
-				},
+		$.getJSON(API_EDIT_PERFORMANCE + id)
+		.done(res => {
+			if (!res.success || !res.data) {
+				return alert('Error: ' + (res.message || 'No data'));
 			}
-		],
+			const d = res.data;
+			$form.find('#editRecordId').val(d.record_id);
+			$form.find('#recordDesc').val(d.record_desc || '');
+			if (res.document?.document_name) {
+				$('#currentFile').html(
+					`<a href="${res.document.document_path}" target="_blank">
+              <i class="far fa-file-alt"></i> ${res.document.document_name}
+				</a>`
+				);
+			}
+			pendingDate = d.record_date ? moment(d.record_date) : null;
+			$('#editModal').modal('show');
+		})
+		.fail(xhr => console.error('AJAX error:', xhr));
 	});
 
-	tblKinerja.off('click', '.edit-btn-kinerja').on('click', '.edit-btn-kinerja', function() {
-		const id = $(this).data('id');
-		console.log('[Init] Edit ID:', id);
+	 // --- On modal show: set date field ---
+	$('#editModal').on('shown.bs.modal', function() {
+		const $wrapper = $('#editkinerjaDate');
+		if (!editPickerInitialized) {
+      // Initialize datetimepicker now that element exists
+			$wrapper.datetimepicker({
+				format: 'YYYY-MM-DD HH:mm:ss',
+				useCurrent: false,
+				allowInputToggle: true,
+				widgetPositioning: {horizontal: 'auto', vertical: 'bottom'},
+				icons: {
+					time: 'fas fa-clock', date: 'fas fa-calendar', up: 'fas fa-arrow-up',
+					down: 'fas fa-arrow-down', previous: 'fas fa-chevron-left', next: 'fas fa-chevron-right',
+					today: 'fas fa-calendar-check', clear: 'fas fa-trash', close: 'fas fa-times'
+				}
+			});
+      // Sync picker changes to input
+			$wrapper.on('change.datetimepicker', function(e) {
+				if (e.date) {
+					$('#editForm').find('input[name="record_date"]').val(e.date.format('YYYY-MM-DD HH:mm:ss'));
+				}
+			});
+			editPickerInitialized = true;
+		}
 
-		$('#editModal').find('input, textarea').val('');
+    // Set the pending date into picker and input
+		if (pendingDate) {
+			$wrapper.datetimepicker('date', pendingDate);
+			$('#editForm').find('input[name="record_date"]').val(pendingDate.format('YYYY-MM-DD HH:mm:ss'));
+		}
+	});
+
+	$('#editForm').on('submit', function(e) {
+		e.preventDefault();
+		const formEl = this;  
+
+		const fd = new FormData(formEl);
+
+		const recordId = fd.get('record_id');
 
 		$.ajax({
-			url: API_EDIT_PERFORMANCE + id,
-			type: 'GET',
-			dataType: 'json',
-			success: function(response) {
-				try {
-					if (!response || typeof response !== 'object') throw new Error("Invalid server response");
-					if (!response.success) throw new Error(response.message || "Server returned failure");
-					if (!response.data || typeof response.data !== 'object') throw new Error("Invalid data structure");
-
-					console.log('[Response]', response);
-
-					$('#editModal').modal('show');
-
-					$('#editModal').one('shown.bs.modal', function() {
-						console.log('[Modal Shown] Filling form...');
-
-						$('#editRecordId').val(response.data.record_id);
-						$('#recordDesc').val(response.data.record_desc);
-						console.log('record_desc value:', $('#recordDesc').val());
-
-						if (response.data.record_date) {
-							const dateObj = new Date(response.data.record_date);
-							
-							if (!isNaN(dateObj.getTime())) { 
-								const formattedDate = formatDateForInput(dateObj);
-								$('#kinerjaDate').val(formattedDate);
-								
-								const timeString = dateObj.toTimeString().split(' ')[0];
-								$('#originalTime').val(timeString);
-								
-								console.log('Date set:', formattedDate, 
-									'Input value:', $('#kinerjaDate').val());
-							} else {
-								console.error('Invalid date:', response.data.record_date);
-							}
-						} else {
-							console.warn('record_date is missing or null');
-						}
-
-						if (response.document) {
-							$('#currentFile').html(`
-                            <a href="${response.document.document_path}" target="_blank">
-                                <i class="far fa-file-alt"></i> ${response.document.document_name}
-                            </a>
-							`);
-						}
-					});
-
-				} catch (error) {
-					console.error('[Critical Error]', error);
-					alert(`Gagal memproses: ${error.message}`);
-					$('#editModal').modal('show');
-				}
-			},
-			error: function(xhr) {
-				console.error('[AJAX Error]', {
-					status: xhr.status,
-					response: xhr.responseText
-				});
-				alert(`Error ${xhr.status}: Gagal mengambil data`);
+			url: API_UPDATE_PERFORMANCE + recordId,
+			type: 'POST',
+			data: fd,
+			processData: false,  
+			contentType: false,  
+			dataType: 'json'
+		})
+		.done(res => {
+			if (res.success) {
+				$('#editModal').modal('hide');
+				$('#tblKinerja').DataTable().ajax.reload(null, false);
+				alert('Kinerja updated successfully');
+			} else {
+				alert('Update failed: ' + (res.message || 'Unknown error'));
 			}
+		})
+		.fail(xhr => {
+			console.error('Update AJAX error:', xhr);
+			alert('Error ' + xhr.status + ': ' + xhr.statusText);
 		});
 	});
-
-	function formatDateForInput(date) {
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, '0');
-		const day = String(date.getDate()).padStart(2, '0');
-		return `${year}-${month}-${day}`;
-	}
-
-	// $('#kinerjaDate').datetimepicker({
-	// 	format: 'YYYY/MM/DD HH:mm:ss',
-	// 	useCurrent: false,
-	// 	icons: {
-	// 		time: 'fas fa-clock',
-	// 		date: 'fas fa-calendar-alt',
-	// 		up: 'fas fa-arrow-up',
-	// 		down: 'fas fa-arrow-down',
-	// 		previous: 'fas fa-chevron-left',
-	// 		next: 'fas fa-chevron-right',
-	// 		today: 'fas fa-calendar-check',
-	// 		clear: 'fas fa-trash',
-	// 		close: 'fas fa-times'
-	// 	}
-	// }).on('change.datetimepicker', function(e) {
-	// 	if (e.date) {
-	// 		$('input[name="record_date"]').val(e.date.format('YYYY-MM-DD HH:mm:ss'));
-	// 	}
-	// });
 });
