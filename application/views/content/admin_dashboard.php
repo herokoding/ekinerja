@@ -21,7 +21,7 @@
     <div class="content">
         <div class="container">
             <div class="row">
-                
+                <span style="text-align: center;"><h2>Selamat Datang</h2></span>
             </div>
             <!-- /.row -->
         </div><!-- /.container-fluid -->

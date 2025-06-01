@@ -157,6 +157,14 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="editUser">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                
+            </div>
+        </div>
+    </div>
     <!-- /.content -->
 </div>
         <!-- /.content-wrapper -->

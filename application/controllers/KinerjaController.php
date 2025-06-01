@@ -8,6 +8,16 @@ class KinerjaController extends CI_Controller {
 		parent::__construct();
 		$this->load->model('MenuModel', 'menu');
 		$this->load->model('KinerjaModel', 'kinerja');
+
+		if (!$this->session->userdata('role_id')) {
+            redirect('auth','refresh');
+        }
+
+        $accessMenu = $this->db->get_where('access_menu', ['role_id' => $this->session->userdata('role_id')]);
+
+        if ($accessMenu->num_rows() < 1) {
+            redirect('auth/blocked','refresh');
+        }
 	}
 
 	public function index()
@@ -21,9 +31,14 @@ class KinerjaController extends CI_Controller {
 		$this->form_validation->set_rules('record_desc', 'Uraian Kinerja', 'required');
 
 		if ($this->form_validation->run() == FALSE) {
+			$month = $this->input->get('month') ?? date('m');
+			$year = $this->input->get('year') ?? date('Y');
+
 			$data = array(
 				'title' => "Daftar Kinerja",
 				'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
+				'current_month' => $month,
+				'current_year' => $year,
 			);
 
 			$this->load->view('main/header', $data, FALSE);
@@ -84,9 +99,15 @@ class KinerjaController extends CI_Controller {
 
 	public function checkStatus()
 	{
+		$month = $this->input->get('month') ?? date('m');
+		$year = $this->input->get('year') ?? date('Y');
+
 		$data = [
 			'title' => "Status Approval",
 			'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
+			'kinerjaList' => $this->kinerja->getLists($month, $year)->result_array(),
+			'month' => $month,
+			'year' => $year,
 		];
 
 		$this->load->view('main/header', $data, FALSE);
@@ -95,9 +116,57 @@ class KinerjaController extends CI_Controller {
 		$this->load->view('main/footer');
 	}
 
+	public function reportPrint()
+	{
+		$month = $this->input->get('month') ?? date('m');
+		$year = $this->input->get('year') ?? date('Y');
+
+		$data = [
+			'title' => "Status Approval",
+			'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
+			'kinerjaList' => $this->kinerja->getGroupedData($month, $year),
+			'month' => $month,
+			'year' => $year,
+		];
+
+		$this->load->view('main/header', $data, FALSE);
+		$this->load->view('main/navbar', $data, FALSE);
+		$this->load->view('content/print-kinerja', $data, FALSE);
+		$this->load->view('main/footer');
+	}
+
+	public function exportPdf()
+	{
+		$this->load->library('dompdf_lib');
+
+		$month = $this->input->get('month') ?? date('m');
+		$year = $this->input->get('year') ?? date('Y');
+
+		$data = [
+			'title' => "Status Approval",
+			'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
+			'kinerjaList' => $this->kinerja->getGroupedData($month, $year),
+			'periode' => $this->kinerja->getLists($month, $year)->row_array(),
+			'profile' => $this->kinerja->getUserProfile()->row_array(),
+			'month' => $month,
+			'year' => $year,
+		];
+
+		$html = $this->load->view('content/report_pdf', $data, TRUE);
+
+		$this->dompdf_lib->loadHtml($html);
+        $this->dompdf_lib->setPaper('A4', 'portrait');
+        $this->dompdf_lib->render();
+
+        $this->dompdf_lib->stream("laporan_kinerja.pdf", array("Attachment" => false));
+	}
+
 	public function api_get_lists()
 	{
-		$listKinerja = $this->kinerja->getLists()->result_array();
+		$month = $this->input->get('month') ?? date('m');
+		$year = $this->input->get('year') ?? date('Y');
+
+		$listKinerja = $this->kinerja->getFilteredKinerja($month, $year)->result_array();
 
 		foreach ($listKinerja as &$item) { 
 			$item['document_path'] = !empty($item['document_name']) ? base_url('uploads/documents/' . $item['document_name']) : '';

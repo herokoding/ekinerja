@@ -25,20 +25,22 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <form action="" method="get">
-                        <div class="form-row">
-                            <div class="col-md-2">
+                    <form action="" method="get" id="filteredForm">
+                        <div class="form-row align-items-center">
+                            <div class="col-md-3">
                                 <select name="month" id="month" class="form-control">
-                                    <option value="">Select Month</option>
+                                    <option value="">Pilih Bulan</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="year" id="year" class="form-control">
+                                    <option value="">Pilih Tahun</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <select name="year" id="year" class="form-control">
-                                    <option value="">Select Year</option>
-                                </select>
-                            </div>
-                            <div class="co-md-2">
-                                <button type="submit" class="btn btn-magenta">Get</button>
+                                <button type="submit" class="btn btn-magenta">
+                                    <i class="fas fa-filter"></i> Filter
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -81,24 +83,24 @@
 
     <div class="modal fade" id="addKinerja" tabindex="-1" role="dialog" aria-labelledby="addKinerjaLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addKinerjaLabel">Tambah Kinerja</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="formAddKinerja" method="post" action="<?= site_url('kinerja/listKinerja') ?>" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Tanggal Kinerja</label>
-                        <div class="input-group date" id="addkinerjaDate" data-target-input="nearest">
-                          <input type="text" class="form-control datetimepicker-input"
-                          data-target="#addkinerjaDate" name="record_date"/>
-                          <div class="input-group-append" data-target="#addkinerjaDate" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addKinerjaLabel">Tambah Kinerja</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="formAddKinerja" method="post" action="<?= site_url('kinerja/listKinerja') ?>" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Tanggal Kinerja</label>
+                            <div class="input-group date" id="addkinerjaDate" data-target-input="nearest">
+                              <input type="text" class="form-control datetimepicker-input"
+                              data-target="#addkinerjaDate" name="record_date"/>
+                              <div class="input-group-append" data-target="#addkinerjaDate" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                            </div>
                         </div>
-                    </div>
                     </div>
                     <div class="form-group">
                         <label for="">Uraian Kinerja</label>
@@ -108,65 +110,65 @@
                       <label for="">Upload Dokumen Kinerja</label>
                       <input type="file" id="document_name" name="document_name">
                       <i class="fas fa-upload"></i>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-magenta btn-sm">Simpan</button>
-                </div>
-            </form>
-        </div>
-        </div>
-    </div>
-
-    <!-- Modal Edit -->
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Kinerja</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <form id="editForm" enctype="multipart/form-data">
-                    <div class="modal-body">
-                        <input type="hidden" name="record_id" id="editRecordId">
-                        
-                        <div class="form-group">
-                            <label for="kinerjaDate">Tanggal Kinerja</label>
-                            <div class="input-group date" id="editkinerjaDate" data-target-input="nearest">
-                              <input type="text" class="form-control datetimepicker-input" data-target="#editkinerjaDate" name="record_date"/>
-                              <div class="input-group-append" data-target="#editkinerjaDate" data-toggle="datetimepicker">
-                                <div class="input-group-text"><i class="fas fa-calendar"></i></div>
-                            </div>
-                        </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Uraian Kinerja</label>
-                            <textarea name="record_desc" 
-                            id="recordDesc" 
-                            class="form-control" 
-                            rows="5"
-                            required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="">Dokumen Eviden</label>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="editDocument" name="document_name">
-                                <label for="editDocument" class="custom-file-label">Pilih File..</label>
-                            </div>
-                            <small class="form-text text-muted">Biarkan kosong jika tidak ingin update file</small>
-                            <div id="currentFile" class="mt-2"></div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-magenta">Update Changes</button>
-                    </div>
-                </form>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-magenta btn-sm">Simpan</button>
             </div>
-        </div>
+        </form>
     </div>
+</div>
+</div>
+
+<!-- Modal Edit -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Kinerja</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form id="editForm" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" name="record_id" id="editRecordId">
+
+                    <div class="form-group">
+                        <label for="kinerjaDate">Tanggal Kinerja</label>
+                        <div class="input-group date" id="editkinerjaDate" data-target-input="nearest">
+                          <input type="text" class="form-control datetimepicker-input" data-target="#editkinerjaDate" name="record_date"/>
+                          <div class="input-group-append" data-target="#editkinerjaDate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Uraian Kinerja</label>
+                    <textarea name="record_desc" 
+                    id="recordDesc" 
+                    class="form-control" 
+                    rows="5"
+                    required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="">Dokumen Eviden</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="editDocument" name="document_name">
+                        <label for="editDocument" class="custom-file-label">Pilih File..</label>
+                    </div>
+                    <small class="form-text text-muted">Biarkan kosong jika tidak ingin update file</small>
+                    <div id="currentFile" class="mt-2"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-magenta">Update Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
 </div>

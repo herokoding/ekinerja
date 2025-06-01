@@ -5,7 +5,7 @@ class AuthController extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-       
+        
     }
 
     public function index() {
@@ -83,5 +83,10 @@ class AuthController extends CI_Controller {
         // Destroy session and redirect to login
         $this->session->sess_destroy();
         redirect('auth', 'refresh');
+    }
+
+    public function blocked()
+    {
+        echo 'Access Denied !!';
     }
 }

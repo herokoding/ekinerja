@@ -9,6 +9,16 @@ class ConfigController extends CI_Controller {
 		//Do your magic here
 		$this->load->model('ConfigModel', 'config_model');
 		$this->load->model('MenuModel', 'menu');
+
+		if (!$this->session->userdata('role_id')) {
+            redirect('auth','refresh');
+        }
+
+        $accessMenu = $this->db->get_where('access_menu', ['role_id' => $this->session->userdata('role_id')]);
+
+        if ($accessMenu->num_rows() < 1) {
+            redirect('auth/blocked','refresh');
+        }
 	}
 
 	public function index()

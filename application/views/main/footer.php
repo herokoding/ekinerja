@@ -56,7 +56,9 @@
   const API_GET_USER = "<?= site_url('admin/api/getUser') ?>";
   const API_GET_PERFORMANCE = "<?= site_url('kinerja/api/getListKinerja') ?>";
   const API_EDIT_PERFORMANCE = "<?= site_url('kinerja/api/editKinerja/') ?>";
+  const API_EDIT_USER = "<?= site_url('admin/api/editUser/') ?>";
   const API_UPDATE_PERFORMANCE = "<?= site_url('kinerja/api/updateKinerja/') ?>";
+  const API_APPROVAL = "<?= site_url('approval/api/getList') ?>";
 </script>
 <script src="<?= base_url('assets/js/myScript.js') ?>"></script>
 </body>

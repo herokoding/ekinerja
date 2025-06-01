@@ -3,13 +3,73 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class KinerjaModel extends CI_Model {
 
-	public function getLists()
+	public function getLists($month = null, $year = null)
 	{
+		if (empty($month) && empty($year)) {
+			$month = date('m');
+			$year = date('Y');
+		}
+
 		$this->db->select('perform.*, doc.*');
 		$this->db->join('document_records doc', 'doc.record_id = perform.record_id', 'left');
+		$this->db->where('perform.user_id', $this->session->userdata('user_id'));
+		$this->db->where('MONTH(perform.record_date)', $month);
+		$this->db->where('YEAR(perform.record_date)', $year);
 		$this->db->order_by('perform.record_id', 'asc');
 
 		return $this->db->get('performance_records perform');
+	}
+
+	public function getApprove($month = null, $year = null, $user = null)
+	{
+		if (empty($month) && empty($year) && empty($user)) {
+			$month = date('m');
+			$year = date('Y');
+			$user = "";
+		}
+
+		$this->db->select('perform.*, doc.*, user.user_fullname');
+		$this->db->join('document_records doc', 'doc.record_id = perform.record_id', 'left');
+		$this->db->join('users user', 'user.user_id = perform.user_id', 'left');
+		$this->db->where('perform.user_id', $user);
+		$this->db->where('MONTH(perform.record_date)', $month);
+		$this->db->where('YEAR(perform.record_date)', $year);
+		$this->db->order_by('perform.record_id', 'asc');
+
+		return $this->db->get('performance_records perform');
+	}
+
+	public function getGroupedData($month = null, $year = null)
+	{
+		if (empty($month) && empty($year)) {
+            $month = date('m');
+            $year  = date('Y');
+        }
+
+        $this->db->select('perform.*, doc.document_name, doc.document_path');
+        $this->db->from('performance_records perform');
+        $this->db->join('document_records doc', 'doc.record_id = perform.record_id', 'left');
+        $this->db->where('perform.user_id', $this->session->userdata('user_id'));
+        $this->db->where('MONTH(perform.record_date)', (int) $month);
+        $this->db->where('YEAR(perform.record_date)',  (int) $year);
+
+        $this->db->order_by('perform.record_date', 'ASC');
+        $this->db->order_by('perform.record_id',   'ASC');
+
+        $query  = $this->db->get();
+        $result = $query->result_array();
+
+        $grouped = [];
+        foreach ($result as $row) {
+            $tgl = date('Y-m-d', strtotime($row['record_date']));
+
+            if (! isset($grouped[$tgl])) {
+                $grouped[$tgl] = [];
+            }
+            $grouped[$tgl][] = $row;
+        }
+
+        return $grouped;
 	}
 
 	public function getRowById($id)
@@ -55,6 +115,44 @@ class KinerjaModel extends CI_Model {
         }
         $this->db->trans_commit();
         return true;
+    }
+
+    public function getFilteredKinerja($month = null, $year = null)
+    {
+		if (empty($month) && empty($year)) {
+			$month = date('m');
+			$year = date('Y');
+		}
+
+		$this->db->select('perform.*, doc.*');
+		$this->db->join('document_records doc', 'doc.record_id = perform.record_id', 'left');
+		$this->db->from('performance_records perform');
+		$this->db->where('perform.user_id', $this->session->userdata('user_id'));
+		$this->db->where('MONTH(perform.record_date)', $month);
+		$this->db->where('YEAR(perform.record_date)', $year);
+		$this->db->order_by('perform.record_date', 'asc');
+
+		return $this->db->get();
+    }
+
+    public function getUserProfile()
+    {
+    	$this->db->select('user.*, role.role_name, depart.depart_name');
+    	$this->db->join('roles role', 'role.role_id = user.role_id', 'left');
+    	$this->db->join('departments depart', 'depart.depart_id = user.department_id', 'left');
+    	$this->db->where('user.user_id', $this->session->userdata('user_id'));
+
+    	return $this->db->get('users user');
+    }
+
+    public function updateStatus($record_id,$status)
+    {
+    	if (!in_array($status, [1, 2])) {
+    		return false;
+    	}
+
+    	$this->db->where('record_id', $record_id);
+    	return $this->db->update('performance_records', ['record_status' => $status]);
     }
 
 }
