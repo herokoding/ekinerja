@@ -154,7 +154,9 @@ $(function () {
 					orderable: false,
 					searchable: false,
 					render: function (row) {
-						return `<button class="btn btn-sm btn-primary edit-btn" data-id="${row.role_id}">
+						return `<a href="roleAccess/${row.role_id}" class="btn btn-sm btn-info role-btn-access">
+						Access</a>
+						<button class="btn btn-sm btn-primary edit-btn" data-id="${row.role_id}">
 						Edit</button>
             		<button class="btn btn-sm btn-danger delete-btn" data-id="${row.role_id}">
 						Hapus</button>`;

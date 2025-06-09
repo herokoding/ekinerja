@@ -8,6 +8,10 @@ class HomeController extends CI_Controller {
         parent::__construct();
         // Load any required models, libraries, etc.
         // $this->load->model('HomeModel');
+
+        if (!$this->session->userdata('role_id')) {
+            redirect('auth','refresh');
+        }
     }
     /**
      * Index method
@@ -21,7 +25,16 @@ class HomeController extends CI_Controller {
 
     public function index()
     {
-       $this->load->view('main/header');
+       $data = array(
+         'title' => "Ekinerja",
+         'user' => $this->db->get_where('users', ['username' => $this->session->userdata('username')])->row_array(),
+         'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
+        );
+
+      $this->load->view('main/header', $data, FALSE);
+      $this->load->view('main/navbar', $data, FALSE);
+      $this->load->view('content/dashboard', $data, FALSE);
+      $this->load->view('main/footer');
     }
 
 }

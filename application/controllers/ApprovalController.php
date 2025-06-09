@@ -36,7 +36,7 @@ class ApprovalController extends CI_Controller {
 			'title' => "Approve Work",
 			'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
 			'kinerjaList' => $this->kinerja->getLists($month, $year)->result_array(),
-			'listUser' => $this->db->get_where('users', ['is_supervisor' => 1])->result_array(),
+			'listUser' => $this->db->get_where('users', ['is_supervisor' => 0])->result_array(),
 			'month' => $month,
 			'year' => $year,
 			'user' => $user,

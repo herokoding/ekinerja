@@ -23,11 +23,11 @@ class AdminController extends CI_Controller {
 
     public function index()
     {
-      $data = array(
+        $data = array(
          'title' => "Ekinerja",
          'user' => $this->db->get_where('users', ['username' => $this->session->userdata('username')])->row_array(),
          'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
-     );
+        );
 
       $this->load->view('main/header', $data, FALSE);
       $this->load->view('main/navbar', $data, FALSE);
@@ -61,24 +61,27 @@ class AdminController extends CI_Controller {
     $this->load->view('content/list-user', $data, FALSE);
     $this->load->view('main/footer');
 } else {
-    $data = [
-        'user_nik' => $this->input->post('user_nik'),
-        'user_fullname' => $this->input->post('user_fullname'),
-        'user_email' => $this->input->post('user_email'),
-        'username' => $this->input->post('username'),
-        'user_password' => password_hash($this->input->post('password1'), PASSWORD_DEFAULT),
-        'role_id' => $this->input->post('role_id'),
-        'department_id' => $this->input->post('department_id'),
-        'user_is_active' => 1,
-        'user_gender' => $this->input->post('user_gender'),
-        'is_supervisor' => 0,
-        'created_date' => time(),
-    ];
+    if ($this->input->post()) {
+        $data = [
+            'user_nik' => $this->input->post('user_nik'),
+            'user_fullname' => $this->input->post('user_fullname'),
+            'user_email' => $this->input->post('user_email'),
+            'username' => $this->input->post('username'),
+            'user_password' => password_hash($this->input->post('password1'), PASSWORD_DEFAULT),
+            'role_id' => $this->input->post('role_id'),
+            'department_id' => $this->input->post('department_id'),
+            'user_is_active' => 1,
+            'user_gender' => $this->input->post('user_gender'),
+            'is_supervisor' => 0,
+            'created_date' => time(),
+        ];
 
-    $this->db->insert('users', $data);
-    $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">New User added!</div>');
+        $this->db->insert('users', $data);
+        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">New User added!</div>');
 
-    redirect('admin/listUser','refresh');
+        redirect('admin/listUser','refresh');
+        
+    }
 }
 }
 
@@ -159,6 +162,21 @@ public function listRole()
       redirect('admin/listRole','refresh');
   }
 
+}
+
+public function roleAccess($id)
+{
+    $data = array(
+       'title' => "List Data Role",
+       'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
+       'role' => $this->db->get_where('roles', ['role_id' => $id])->row_array(),
+       'menu' => $this->db->get('menus')->result_array(),
+    );
+
+    $this->load->view('main/header', $data, FALSE);
+    $this->load->view('main/navbar', $data, FALSE);
+    $this->load->view('content/list-role-access', $data, FALSE);
+    $this->load->view('main/footer');
 }
 
 public function listDepart()

@@ -3,7 +3,6 @@
     <!-- Content Header (Page header) -->
     <div class="content-header">
         <div class="container">
-            <?= form_error('menu_name', '<div class="alert alert-danger" role="alert">','</div>') ?>
             <?= $this->session->flashdata('message'); ?>
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -84,7 +83,7 @@
             </button>
           </div>
           <!-- Body with Form -->
-          <form id="formAddUser" class="form-horizontal" method="post" action="<?= site_url('admin/addUser') ?>">
+          <form id="formAddUser" class="form-horizontal" method="post" action="<?= base_url('admin/addUser') ?>">
             <div class="modal-body">
                 <div class="container row">
                     <div class="col-md-6">
