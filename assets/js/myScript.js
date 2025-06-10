@@ -21,9 +21,13 @@ $(function () {
 		};
 
   // Fade out alerts
-		setTimeout(() => {
-			$('.alert').fadeTo(500, 0).slideUp(500, function() { $(this).remove(); });
-		}, 4000);
+		window.setTimeout(function() {
+			$('.alert')
+        .fadeTo(500, 0)        // over 0.5 s fade to opacity 0
+        .slideUp(500, function() {
+          $(this).remove();    // then remove from the DOM
+        });
+      }, 4000);
 
 	// Initialize datetimepicker for Add form (wrapper id: addkinerjaDate)
 		$('#addkinerjaDate').datetimepicker({
@@ -264,7 +268,7 @@ $(function () {
 
 		$('#tblUser tbody').on('click', '.edit-btn-user', function() {
 			const id = $(this).data('id');
-			const $form = $('#editForm');
+			const $form = $('#editUser');
 			$form[0].reset();
 
 			$.getJSON(API_EDIT_USER + id)

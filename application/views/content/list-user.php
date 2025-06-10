@@ -160,7 +160,30 @@
     <div class="modal fade" id="editUser">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserLabel">Edit User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form action="" method="post" class="form-horizontal" id="editUserForm">
+                    <div class="modal-body">
+                        <div class="container row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label for="">NIK</label>
+                                    <input type="text" name="user_id" id="userId">
+                                    <input type="text" name="user_nik" id="userNik" class="form-control">
+                                </div>
+                                <div class="form-group row">
+                                    <label for="">Nama Lengkap</label>
+                                    <input type="text" name="user_fullname" id="fullName" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
