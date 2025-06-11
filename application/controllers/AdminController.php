@@ -221,26 +221,31 @@ public function api_get_users()
 
 public function api_get_row_users($id)
 {
-    if (!is_numeric($id)) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'ID tidak valid'
-        ]);
-        return;
-    }
+    // if (!is_numeric($id)) {
+    //     echo json_encode([
+    //         'success' => false,
+    //         'message' => 'ID tidak valid'
+    //     ]);
+    //     return;
+    // }
 
     $rowUser = $this->user->getRowById($id)->row_array();
 
-    $response = [
-        'success' => false,
-        'message' => 'Data tidak ditemukan',
-        'data' => null,
-        'document' => null
-    ];
+    echo json_encode([
+        'success' => true,
+        'data' => $rowUser
+    ]);
 
-    $this->output
-    ->set_content_type('application/json')
-    ->set_output(json_encode($response));
+    // $response = [
+    //     'success' => false,
+    //     'message' => 'Data tidak ditemukan',
+    //     'data' => null,
+    //     'document' => null
+    // ];
+
+    // $this->output
+    // ->set_content_type('application/json')
+    // ->set_output(json_encode($response));
 }
 
 public function api_get_role()
@@ -269,6 +274,57 @@ public function api_get_department()
         'data' => $department
     ]);
 }
+
+public function api_update_users()
+{
+    header('Content-Type: application/json');
+
+    try {
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        // Validasi input
+        if (empty($input['user_id'])) {
+            throw new Exception('ID User tidak valid');
+        }
+
+        $data = [
+            'user_nik' => $input['user_nik'],
+            'user_fullname' => $input['user_fullname'],
+            'user_email' => $input['user_email'],
+            'username' => $input['username'],
+            'user_gender' => $input['user_gender'],
+            'role_id' => $input['role_id'],
+            'user_is_active' => $input['user_is_active']
+        ];
+
+        if (!empty($input['change_password']) && $input['change_password'] == 1) {
+            if (empty($input['password']) || $input['password'] !== $input['password_confirmation']) {
+                throw new Exception('Password dan konfirmasi password tidak sama');
+            }
+            $data['user_password'] = password_hash($input['password'], PASSWORD_DEFAULT);
+        }
+
+        $update = $this->db->where('user_id', $input['user_id'])->update('users', $data);
+
+        if (!$update) {
+            throw new Exception('Gagal memperbarui data user');
+        }
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Data user berhasil diperbarui'
+        ]);
+        
+    } catch (Exception $e) {
+        echo json_encode([
+            'success' => false,
+            'message' => $e->getMessage()
+        ]);
+    }
+
+}
+
+
 }
 
 /* End of file AdminController.php */

@@ -41,8 +41,8 @@
                                         <th>Nama Lengkap</th>
                                         <th>Email</th>
                                         <th>Username</th>
-                                        <th>Role</th>
-                                        <th>Department</th>
+                                        <th>Jabatan</th>
+                                        <th>Divisi</th>
                                         <th>Status Active</th>
                                         <th>Gender</th>
                                         <th>Action</th>
@@ -56,8 +56,8 @@
                                         <th>Nama Lengkap</th>
                                         <th>Email</th>
                                         <th>Username</th>
-                                        <th>Role</th>
-                                        <th>Department</th>
+                                        <th>Jabatan</th>
+                                        <th>Divisi</th>
                                         <th>Status Active</th>
                                         <th>Gender</th>
                                         <th>Action</th>
@@ -119,7 +119,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group row">
-                            <label for="">Role</label>
+                            <label for="">Jabatan</label>
                             <select name="role_id" id="roleId" class="form-control">
                                 <option value="">Select</option>
                                 <?php foreach ($role as $item) : ?>
@@ -128,7 +128,7 @@
                             </select>
                         </div>
                         <div class="form-group row">
-                            <label for="">Department</label>
+                            <label for="">Divisi</label>
                             <select name="department_id" id="departId" class="form-control">
                                 <option value="">Select</option>
                                 <?php foreach ($department as $item) : ?>
@@ -157,7 +157,7 @@
       </div>
     </div>
 
-    <div class="modal fade" id="editUser">
+    <div class="modal fade" id="editUser" tabindex="-1" role="dialog" aria-labelledby="editUserLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -173,16 +173,79 @@
                             <div class="col-md-6">
                                 <div class="form-group row">
                                     <label for="">NIK</label>
-                                    <input type="text" name="user_id" id="userId">
+                                    <input type="hidden" name="user_id" id="userId">
                                     <input type="text" name="user_nik" id="userNik" class="form-control">
                                 </div>
                                 <div class="form-group row">
                                     <label for="">Nama Lengkap</label>
                                     <input type="text" name="user_fullname" id="fullName" class="form-control">
                                 </div>
+                                <div class="form-group row">
+                                    <label for="">Email</label>
+                                    <input type="text" class="form-control" name="user_email" id="userEmail">
+                                </div>
+                                <div class="form-group row">
+                                    <label for="">Username</label>
+                                    <input type="text" class="form-control" name="username" id="userName">
+                                </div>
+                                <div class="form-group row">
+                                    <label for="" class="col-sm-12 col-form-label">Gender</label>
+                                    <div class="col-sm-4">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="user_gender" id="genderL" value="L">
+                                            <label class="form-check-label" for="genderL">Laki-laki</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="user_gender" id="genderP" value="P">
+                                            <label class="form-check-label" for="genderP">Perempuan</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label for="">Jabatan</label>
+                                    <select name="role_id" id="roleId" class="form-control">
+                                        <option value="">-- Pilih Jabatan --</option>
+                                    </select>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="">Divisi</label>
+                                    <select name="department_id" id="departId" class="form-control">
+                                        <option value="">-- Pilih Divisi --</option>
+                                    </select>
+                                </div>
+                                <div class="form-group row">
+                                    <label>Ubah Password?</label>
+                                    <div class="col-sm-12">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="change_password" id="changePwYes" value="1">
+                                            <label class="form-check-label" for="changePwYes">Ya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="change_password" id="changePwNo" value="0" checked>
+                                            <label class="form-check-label" for="changePwNo">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="passwordFields" style="display:none">
+                                    <div class="form-group row">
+                                        <label for="">Password Baru</label>
+                                        <input type="password" name="password1" id="pw1" class="form-control" disabled>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="">Konfirmasi Password</label>
+                                        <input type="password" name="password2" id="pw2" class="form-control" disabled>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+                      <button type="submit" class="btn btn-magenta btn-sm">Simpan</button>
+                  </div>
                 </form>
             </div>
         </div>

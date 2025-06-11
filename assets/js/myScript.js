@@ -20,6 +20,26 @@ $(function () {
 			$('#year').append(new Option(y, y, false, y == selYear));
 		};
 
+		function loadRoles() {
+			return $.getJSON(API_GET_ROLE).then(res => {
+				if (res.data) {
+					return res.data;
+				}
+
+				return [];
+			})
+		}
+
+		function loadDepart() {
+			return $.getJSON(API_GET_DEPART).then(res => {
+				if (res.data) {
+					return res.data;
+				}
+
+				return [];
+			})
+		}
+
   // Fade out alerts
 		window.setTimeout(function() {
 			$('.alert')
@@ -246,7 +266,10 @@ $(function () {
 				},
 				{
 					data: 'user_is_active',
-					width: 100
+					width: 100,
+					render: function (data, type, row) {
+						return data == 1 ? 'Active' : 'Nonactive';
+					}
 				},
 				{
 					data: 'user_gender'
@@ -257,7 +280,7 @@ $(function () {
 					searchable: false,
 					width: 200,
 					render: function (row) {
-						return `<button class="btn btn-sm btn-primary edit-btn-user" data-id="${row.user_id}">
+						return `<button class="btn btn-sm btn-primary edit-btn-user" data-id="${row.user_id}" data-toggle="modal" data-target="#editUser">
 						Edit</button>
             		<button class="btn btn-sm btn-danger delete-btn-user" data-id="${row.user_id}">
 						Hapus</button>`;
@@ -268,29 +291,148 @@ $(function () {
 
 		$('#tblUser tbody').on('click', '.edit-btn-user', function() {
 			const id = $(this).data('id');
-			const $form = $('#editUser');
+			const $form = $('#editUserForm');
 			$form[0].reset();
 
-			$.getJSON(API_EDIT_USER + id)
-			.done(res => {
-				if (!res.success || !res.data) {
-					return alert('Error: ' + (res.message || 'No data'));
+			Promise.all([
+				$.getJSON(API_EDIT_USER + id),
+				loadRoles(),
+				loadDepart()
+			])
+			.then(function(results) {
+				const [userResponse, roles, departs] = results;
+
+				if (!userResponse.success || !userResponse.data) {
+					throw new Error(userResponse.message || 'No user data');
 				}
-				const d = res.data;
-				$form.find('#editRecordId').val(d.record_id);
-				$form.find('#recordDesc').val(d.record_desc || '');
-				if (res.document?.document_name) {
-					$('#currentFile').html(
-						`<a href="${res.document.document_path}" target="_blank">
-              <i class="far fa-file-alt"></i> ${res.document.document_name}
-					</a>`
+
+				const userData = userResponse.data;
+
+				$form.find('#userId').val(userData.user_id);
+				$form.find('#userNik').val(userData.user_nik);
+				$form.find('#fullName').val(userData.user_fullname);
+				$form.find('#userEmail').val(userData.user_email);
+				$form.find('#userName').val(userData.username);
+
+				if (userData.user_gender) {
+					$form.find(`input[name="user_gender"][value="${userData.user_gender}"]`).prop('checked', true);
+				}
+
+				const $roleSelect = $form.find('#roleId');
+				$roleSelect.empty().append('<option value="">-- Pilih Role --</option>');
+
+				roles.forEach(function(role) {
+					$roleSelect.append(
+						$('<option>', {
+							value: role.role_id,
+							text: role.role_name
+						})
+						);
+				});
+
+				if (userData.role_id) {
+					$roleSelect.val(userData.role_id);
+				}
+
+				const $departSelect = $form.find('#departId');
+				$departSelect.empty().append('<option value="">-- Pilih Divisi --</option>');
+
+				departs.forEach(function(depart) {
+					$departSelect.append(
+						$('<option>', {
+							value: depart.depart_id,
+							text: depart.depart_name
+						})
 					);
+				});
+
+				if (userData.department_id) {
+					$departSelect.val(userData.department_id);
 				}
-				pendingDate = d.record_date ? moment(d.record_date) : null;
-				$('#editModal').modal('show');
+
+				$('#editUser').modal('show');
 			})
-			.fail(xhr => console.error('AJAX error:', xhr));
-		})
+			.catch(function(error) {
+				console.error('Error:', error);
+				alert('Gagal memuat data: ' + error.message);
+			})
+			.finally(function() {
+				$('#editUser').find('.modal-body').removeClass('loading');
+			});
+		});
+
+		$('#editUserForm').on('change', 'input[name="change_password"]', function() {
+			const showPasswordFields = $(this).val() === '1';
+			$('#passwordFields').toggle(showPasswordFields);
+
+			$('#pw1, #pw2').prop('disabled', !showPasswordFields);
+
+			if (!showPasswordFields) {
+				$('#pw1, #pw2').val('');
+			}
+		});
+
+		$('#editUserForm').on('submit', function(e) {
+			e.preventDefault();
+			const $form = $(this);
+			const $submitBtn = $form.find('button[type="submit"]');
+
+			const changePassword = $form.find('input[name="change_password"]:checked').val() === '1';
+			if (changePassword) {
+				const pw1 = $('#pw1').val();
+				const pw2 = $('#pw2').val();
+
+				if (pw1 !== pw2) {
+					alert('Password dan konfirmasi password tidak sama!');
+					return false;
+				}
+
+				if (pw1.length < 6) {
+					alert('Password minimal 6 karakter!');
+					return false;
+				}
+			}
+
+			const formData = {};
+			$form.serializeArray().forEach(function(field) {
+				if (!changePassword && (field.name === 'password' || field.name === 'password_confirmation')) {
+					return;
+				}
+				formData[field.name] = field.value;
+			});
+
+			formData.change_password = changePassword;
+
+			$submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Menyimpan...');
+
+
+			$.ajax({
+				url: API_UPDATE_USER,
+				type: 'POST',
+				data: JSON.stringify(formData),
+				contentType: 'application/json',
+				success: function(response) {
+					if (response.success) {
+						alert('Data berhasil diperbarui');
+						$('#editUser').modal('hide');
+						$('#tblUser').DataTable().ajax.reload();
+					} else {
+						alert('Error: ' + (response.message || 'Gagal memperbarui data'));
+					}
+				},
+				error: function(xhr) {
+					console.error('Error:', xhr);
+					let errorMsg = 'Terjadi kesalahan saat mengupdate data';
+					if (xhr.responseJSON && xhr.responseJSON.message) {
+						errorMsg = xhr.responseJSON.message;
+					}
+					alert(errorMsg);
+				},
+				complete: function() {
+					$submitBtn.prop('disabled', false).html('Simpan Perubahan');
+				}
+			});
+		});
 
 	// --- Initialize Datatable ---
 		const tblKinerja = $('#tblKinerja').DataTable({
