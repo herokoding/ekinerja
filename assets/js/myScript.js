@@ -86,19 +86,54 @@ $(function () {
 					orderable: false,
 					searchable: false,
 					render: function (row) {
-						return `<button class="btn btn-sm btn-primary edit-btn" data-id="${row.menu_id}">
+						return `<button class="btn btn-sm btn-primary edit-btn-menu" data-id="${row.menu_id}" data-toggle="modal" data-target="#editMenu">
 						Edit</button>
-            		<button class="btn btn-sm btn-danger delete-btn" data-id="${row.menu_id}">
+            		<button class="btn btn-sm btn-danger delete-btn-menu" data-id="${row.menu_id}" data-toggle="modal" data-target="#deleteMenu">
 						Hapus</button>`;
 					},
 				}
 			],
 		});
 
-		$('#tblMenu tbody').on('click', '.edit-btn', function() {
-			const id = $(this).data('id');
-    // misal: buka modal edit, lalu $.getJSON(...) dst.
+		$('#tblMenu tbody').on('click', '.edit-btn-menu', function() {
+			const id     = $(this).data('id');
+			const $modal = $('#editMenu');
+			const $body  = $modal.find('.modal-body');
+			const $form  = $('#editMenuForm');
+
+			console.log('Tombol edit diklik, ID =', id);
+
+			$form[0].reset();
+			$body.addClass('loading');
+			$modal.modal('show');
+
+			$.getJSON(API_EDIT_MENU + id)
+			.done(function(res) {
+				console.log('Response API:', res);
+				if (res.success && res.data) {
+					$form.find('#menuId').val   (res.data.menu_id);
+					$form.find('#menuName').val (res.data.menu_name);
+				} else {
+					$body.html(
+						'<div class="alert alert-warning text-center m-0 p-3">' +
+						'Gagal memuat data: ' + res.message +
+						'</div>'
+						);
+				}
+			})
+			.fail(function(jqXHR, textStatus, err) {
+				console.error('AJAX error:', textStatus, err);
+				$body.html(
+					'<div class="alert alert-danger text-center m-0 p-3">' +
+					'Terjadi kesalahan saat memuat data (' + textStatus + ')' +
+					'</div>'
+					);
+			})
+			.always(function() {
+				$body.removeClass('loading');
+			});
 		});
+
 
 		$('#tblSubMenu').DataTable({
 			"processing": true,
@@ -282,7 +317,7 @@ $(function () {
 					render: function (row) {
 						return `<button class="btn btn-sm btn-primary edit-btn-user" data-id="${row.user_id}" data-toggle="modal" data-target="#editUser">
 						Edit</button>
-            		<button class="btn btn-sm btn-danger delete-btn-user" data-id="${row.user_id}">
+            			<button class="btn btn-sm btn-danger delete-btn-user" data-id="${row.user_id}" data-toggle="modal" data-target="#deleteConfirmModal">
 						Hapus</button>`;
 					},
 				}
@@ -376,6 +411,7 @@ $(function () {
 			e.preventDefault();
 			const $form = $(this);
 			const $submitBtn = $form.find('button[type="submit"]');
+			const userId = $('#userId').val(); 
 
 			const changePassword = $form.find('input[name="change_password"]:checked').val() === '1';
 			if (changePassword) {
@@ -393,39 +429,59 @@ $(function () {
 				}
 			}
 
-			const formData = {};
-			$form.serializeArray().forEach(function(field) {
-				if (!changePassword && (field.name === 'password' || field.name === 'password_confirmation')) {
+			const formData = new FormData($form[0]);
+			const data = {
+				user_id: userId 
+			};
+
+			formData.forEach((value, key) => {
+				if (!changePassword && (key === 'password' || key === 'password_confirmation')) {
 					return;
 				}
-				formData[field.name] = field.value;
+				data[key] = value;
 			});
 
-			formData.change_password = changePassword;
+			data.change_password = changePassword;
+
+			if (!userId) {
+				alert('User ID tidak ditemukan!');
+				return;
+			}
 
 			$submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Menyimpan...');
 
-
 			$.ajax({
-				url: API_UPDATE_USER,
+				url: `${API_UPDATE_USER}/${userId}`, 
 				type: 'POST',
-				data: JSON.stringify(formData),
+				data: JSON.stringify(data), 
 				contentType: 'application/json',
+				dataType: 'json',
 				success: function(response) {
-					if (response.success) {
+					if (response && response.success) {
 						alert('Data berhasil diperbarui');
 						$('#editUser').modal('hide');
 						$('#tblUser').DataTable().ajax.reload();
 					} else {
-						alert('Error: ' + (response.message || 'Gagal memperbarui data'));
+						const msg = response ? response.message : 'Respon tidak valid dari server';
+						alert('Error: ' + msg);
 					}
 				},
 				error: function(xhr) {
 					console.error('Error:', xhr);
 					let errorMsg = 'Terjadi kesalahan saat mengupdate data';
-					if (xhr.responseJSON && xhr.responseJSON.message) {
-						errorMsg = xhr.responseJSON.message;
+
+					if (xhr.responseJSON) {
+						errorMsg = xhr.responseJSON.message || 
+						(xhr.responseJSON.error ? xhr.responseJSON.error : errorMsg);
+					} else if (xhr.responseText) {
+						try {
+							const resp = JSON.parse(xhr.responseText);
+							errorMsg = resp.message || errorMsg;
+						} catch (e) {
+							errorMsg = xhr.responseText;
+						}
 					}
+
 					alert(errorMsg);
 				},
 				complete: function() {
@@ -433,6 +489,51 @@ $(function () {
 				}
 			});
 		});
+
+		$('#tblUser tbody').on('click', '.delete-btn-user', function() {
+			const userId = $(this).data('id');
+			const userName = $(this).closest('tr').find('td:eq(2)').text(); 
+
+			$('#deleteConfirmModal').modal('show');
+
+			$('#deleteConfirmModal .user-name').text(userName);
+
+			$('#confirmDeleteBtn').off('click').on('click', function() {
+				deleteUser(userId);
+			});
+		});
+
+		function deleteUser(userId) {
+			$.ajax({
+				url: `${API_DELETE_USER}/${userId}`,
+				type: 'DELETE',
+				dataType: 'json',
+				beforeSend: function() {
+					$('#confirmDeleteBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Menghapus...');
+				},
+				success: function(response) {
+					if (response.success) {
+						alert('User berhasil dihapus');
+						$('#tblUser').DataTable().ajax.reload();
+					} else {
+						alert('Error: ' + (response.message || 'Gagal menghapus user'));
+					}
+					$('#deleteConfirmModal').modal('hide');
+				},
+				error: function(xhr) {
+					console.error('Error:', xhr);
+					let errorMsg = 'Terjadi kesalahan saat menghapus data';
+					if (xhr.responseJSON && xhr.responseJSON.message) {
+						errorMsg = xhr.responseJSON.message;
+					}
+					alert(errorMsg);
+					$('#deleteConfirmModal').modal('hide');
+				},
+				complete: function() {
+					$('#confirmDeleteBtn').prop('disabled', false).html('Ya, Hapus');
+				}
+			});
+		}
 
 	// --- Initialize Datatable ---
 		const tblKinerja = $('#tblKinerja').DataTable({

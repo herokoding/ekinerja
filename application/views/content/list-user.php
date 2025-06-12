@@ -97,11 +97,13 @@
                         </div>
                         <div class="form-group row">
                             <label for="">Email</label>
-                            <input type="text" class="form-control" name="user_email" id="email">
+                            <input type="text" class="form-control <?= form_error('user_email') ? 'is-invalid' : '' ?>" name="user_email" id="email">
+                            <?= form_error('user_email', '<div class="invalid-feedback">', '</div>') ?>
                         </div>
                         <div class="form-group row">
                             <label for="">Username</label>
-                            <input type="text" class="form-control" name="username" id="username">
+                            <input type="text" class="form-control <?= form_error('username') ? 'is-invalid' : '' ?>" name="username" id="username">
+                            <?= form_error('username', '<div class="invalid-feedback">', '</div>') ?>
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-12 col-form-label">Gender</label>
@@ -138,7 +140,8 @@
                         </div>
                         <div class="form-group row">
                             <label for="">Password</label>
-                            <input type="password" class="form-control" name="password1" id="pw1">
+                            <input type="password" class="form-control <?= form_error('password1') ? 'is-invalid' : '' ?>" name="password1" id="pw1">
+                            <?= form_error('password1', '<div class="invalid-feedback">', '</div>') ?>
                         </div>
                         <div class="form-group row">
                             <label for="">Confirm Password</label>
@@ -156,6 +159,14 @@
         </div>
       </div>
     </div>
+
+    <?php if (validation_errors()): ?>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                $('#addUser').modal('show');
+            });
+        </script>
+    <?php endif; ?>
 
     <div class="modal fade" id="editUser" tabindex="-1" role="dialog" aria-labelledby="editUserLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -247,6 +258,28 @@
                       <button type="submit" class="btn btn-magenta btn-sm">Simpan</button>
                   </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Konfirmasi Hapus User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Anda yakin ingin menghapus user <strong class="user-name"></strong>?</p>
+                    <p class="text-danger">Data yang dihapus tidak dapat dikembalikan!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Ya, Hapus</button>
+                </div>
             </div>
         </div>
     </div>

@@ -8,9 +8,13 @@ $route['admin/api/getDepart']['get'] = 'AdminController/api_get_department';
 $route['admin/api/getUser']['get'] = 'AdminController/api_get_users';
 $route['admin/api/editUser/(:num)']['get'] = 'AdminController/api_get_row_users/$1';
 $route['admin/api/updateUser/(:num)']['post'] = 'AdminController/api_update_users/$1';
+$route['admin/api/deleteUser/(:num)']['delete'] = 'AdminController/api_delete_users/$1';
+$route['admin/api/editMenu/(:num)']['get'] = 'AdminController/api_get_menu_row/$1';
+
 $route['kinerja/api/getListKinerja']['get'] = 'KinerjaController/api_get_lists';
 $route['kinerja/api/editKinerja/(:num)']['get'] = 'KinerjaController/api_get_row_kinerja/$1';
 $route['kinerja/api/updateKinerja/(:num)']['post'] = 'KinerjaController/api_update_kinerja/$1';
+
 $route['approval/api/getList'] = 'ApprovalController/api_get_lists';
 
 // Admin Routes

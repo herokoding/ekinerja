@@ -37,52 +37,52 @@ class AdminController extends CI_Controller {
 
   public function listUser()
   {
-   $this->form_validation->set_rules('user_email', 'Email', 'trim|required|valid_email|is_unique[users.user_email]', [
+     $this->form_validation->set_rules('user_email', 'Email', 'trim|required|valid_email|is_unique[users.user_email]', [
       'is_unique' => "This Email has been registered!"
   ]);
-   $this->form_validation->set_rules('username', 'Username', 'trim|required|min_length[5]|max_length[10]|is_unique[users.username]', [
+     $this->form_validation->set_rules('username', 'Username', 'trim|required|min_length[5]|max_length[10]|is_unique[users.username]', [
       'is_unique' => "This username already taken, please use another username"
   ]);
-   $this->form_validation->set_rules('password1', 'Password', 'trim|required|min_length[5]|max_length[12]|matches[password2]', [
+     $this->form_validation->set_rules('password1', 'Password', 'trim|required|min_length[5]|max_length[12]|matches[password2]', [
       'matches' => "Your password not match!",
       'min_length' => "Your password is too short"
   ]);
-   $this->form_validation->set_rules('password2', 'Repeat Password', 'trim|required|min_length[5]|max_length[12]|matches[password1]');
+     $this->form_validation->set_rules('password2', 'Repeat Password', 'trim|required|min_length[5]|max_length[12]|matches[password1]');
 
-   if ($this->form_validation->run() == FALSE) {
-    $data = array(
-        'title' => "List Data User",
-        'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
-        'role' => $this->menu->getRole()->result_array(),
-        'department' => $this->menu->getDepart()->result_array(),
-    );
-    $this->load->view('main/header', $data, FALSE);
-    $this->load->view('main/navbar', $data, FALSE);
-    $this->load->view('content/list-user', $data, FALSE);
-    $this->load->view('main/footer');
-} else {
-    if ($this->input->post()) {
-        $data = [
-            'user_nik' => $this->input->post('user_nik'),
-            'user_fullname' => $this->input->post('user_fullname'),
-            'user_email' => $this->input->post('user_email'),
-            'username' => $this->input->post('username'),
-            'user_password' => password_hash($this->input->post('password1'), PASSWORD_DEFAULT),
-            'role_id' => $this->input->post('role_id'),
-            'department_id' => $this->input->post('department_id'),
-            'user_is_active' => 1,
-            'user_gender' => $this->input->post('user_gender'),
-            'is_supervisor' => 0,
-            'created_date' => time(),
-        ];
+     if ($this->form_validation->run() == FALSE) {
+        $data = array(
+            'title' => "List Data User",
+            'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
+            'role' => $this->menu->getRole()->result_array(),
+            'department' => $this->menu->getDepart()->result_array(),
+        );
+        $this->load->view('main/header', $data, FALSE);
+        $this->load->view('main/navbar', $data, FALSE);
+        $this->load->view('content/list-user', $data, FALSE);
+        $this->load->view('main/footer');
+    } else {
+        if ($this->input->post()) {
+            $data = [
+                'user_nik' => $this->input->post('user_nik'),
+                'user_fullname' => $this->input->post('user_fullname'),
+                'user_email' => $this->input->post('user_email'),
+                'username' => $this->input->post('username'),
+                'user_password' => password_hash($this->input->post('password1'), PASSWORD_DEFAULT),
+                'role_id' => $this->input->post('role_id'),
+                'department_id' => $this->input->post('department_id'),
+                'user_is_active' => 1,
+                'user_gender' => $this->input->post('user_gender'),
+                'is_supervisor' => 0,
+                'created_date' => time(),
+            ];
 
-        $this->db->insert('users', $data);
-        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">New User added!</div>');
+            $this->db->insert('users', $data);
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">New User added!</div>');
 
-        redirect('admin/listUser','refresh');
-        
+            redirect('admin/listUser','refresh');
+
+        }
     }
-}
 }
 
 public function listMenu()
@@ -210,6 +210,32 @@ public function api_get_menu()
   ]);
 }
 
+public function api_get_menu_row($id)
+{
+    // Pastikan header JSON
+    header('Content-Type: application/json; charset=utf-8');
+
+    // Ambil row dari database
+    $rowMenu = $this->db
+        ->get_where('menus', ['menu_id' => $id])
+        ->row_array();
+
+    // Tentukan success flag dan message
+    $success = ! empty($rowMenu);
+    $message = $success
+        ? 'OK'
+        : 'Menu dengan ID ' . $id . ' tidak ditemukan.';
+
+    // Balikkan JSON response
+    echo json_encode([
+        'success' => $success,
+        'data'    => $rowMenu,
+        'message' => $message
+    ]);
+    exit;
+}
+
+
 public function api_get_users()
 {
     $users = $this->menu->getDataUsers()->result_array();
@@ -275,53 +301,82 @@ public function api_get_department()
     ]);
 }
 
-public function api_update_users()
+public function api_update_users($user_id)
 {
     header('Content-Type: application/json');
+    
+    $input = json_decode(file_get_contents('php://input'), true);
 
+    if (empty($user_id) || $user_id != ($input['user_id'] ?? 0)) {
+        throw new Exception('User ID tidak valid');
+    }
+
+    $data = [
+        'user_nik'       => $input['user_nik'] ?? '',
+        'user_fullname'  => $input['user_fullname'] ?? '',
+        'user_email'     => $input['user_email'] ?? '',
+        'username'       => $input['username'] ?? '',
+        'user_gender'    => $input['user_gender'] ?? '',
+        'role_id'        => $input['role_id'] ?? 0,
+        'department_id'  => $input['department_id'] ?? 0,
+        'user_is_active' => $input['user_is_active'] ?? 0
+    ];
+
+    if (!empty($input['change_password']) && $input['change_password'] == '1') {
+        if ($input['password'] !== $input['password_confirmation']) {
+            $response['message'] = 'Password tidak sama';
+            echo json_encode($response);
+            return;
+        }
+        $data['user_password'] = password_hash($input['password'], PASSWORD_DEFAULT);
+    }
+
+    $this->db->where('user_id', $user_id);
+    if ($this->db->update('users', $data)) {
+        $response['success'] = true;
+        $response['message'] = 'Data berhasil diupdate';
+    } else {
+        $response['message'] = 'Gagal mengupdate data';
+    }
+
+    echo json_encode($response);
+}
+
+public function api_delete_users($user_id)
+{
+    header('Content-Type: application/json');
+    
     try {
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        // Validasi input
-        if (empty($input['user_id'])) {
+        // Validasi user_id
+        if (empty($user_id)) {
             throw new Exception('ID User tidak valid');
         }
 
-        $data = [
-            'user_nik' => $input['user_nik'],
-            'user_fullname' => $input['user_fullname'],
-            'user_email' => $input['user_email'],
-            'username' => $input['username'],
-            'user_gender' => $input['user_gender'],
-            'role_id' => $input['role_id'],
-            'user_is_active' => $input['user_is_active']
-        ];
-
-        if (!empty($input['change_password']) && $input['change_password'] == 1) {
-            if (empty($input['password']) || $input['password'] !== $input['password_confirmation']) {
-                throw new Exception('Password dan konfirmasi password tidak sama');
-            }
-            $data['user_password'] = password_hash($input['password'], PASSWORD_DEFAULT);
+        // Cek apakah user ada
+        $user = $this->user->get_user_by_id($user_id);
+        if (!$user) {
+            throw new Exception('User tidak ditemukan');
         }
 
-        $update = $this->db->where('user_id', $input['user_id'])->update('users', $data);
+        // Hapus user
+        $delete = $this->user->delete_user($user_id);
 
-        if (!$update) {
-            throw new Exception('Gagal memperbarui data user');
+        if (!$delete) {
+            throw new Exception('Gagal menghapus user');
         }
 
         echo json_encode([
             'success' => true,
-            'message' => 'Data user berhasil diperbarui'
+            'message' => 'User berhasil dihapus'
         ]);
         
     } catch (Exception $e) {
+        http_response_code(400);
         echo json_encode([
             'success' => false,
             'message' => $e->getMessage()
         ]);
     }
-
 }
 
 

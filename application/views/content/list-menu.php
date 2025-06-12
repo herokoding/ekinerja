@@ -89,6 +89,35 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="editMenu" tabindex="-1" role="dialog" aria-labelledby="editMenuLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editMenuLabel">Edit Menu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form action="" id="editMenuForm">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="">Nama Menu</label>
+                            <input type="hidden" name="menu_id" id="menuId">
+                            <input type="text" name="menu_name" id="menuName" class="form-control <?= form_error('menu_name') ? 'is-invalid' : '' ?>">
+                            <?= form_error('menu_name', '<div class="invalid-feedback">', '</div>') ?>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-magenta btn-sm">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <!-- /.content -->
 </div>
         <!-- /.content-wrapper -->
