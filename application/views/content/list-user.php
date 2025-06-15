@@ -41,8 +41,9 @@
                                         <th>Nama Lengkap</th>
                                         <th>Email</th>
                                         <th>Username</th>
+                                        <th>Password</th>
                                         <th>Jabatan</th>
-                                        <th>Divisi</th>
+                                        <th>Bagian</th>
                                         <th>Status Active</th>
                                         <th>Gender</th>
                                         <th>Action</th>
@@ -56,8 +57,9 @@
                                         <th>Nama Lengkap</th>
                                         <th>Email</th>
                                         <th>Username</th>
+                                        <th>Password</th>
                                         <th>Jabatan</th>
-                                        <th>Divisi</th>
+                                        <th>Bagian</th>
                                         <th>Status Active</th>
                                         <th>Gender</th>
                                         <th>Action</th>
@@ -130,7 +132,7 @@
                             </select>
                         </div>
                         <div class="form-group row">
-                            <label for="">Divisi</label>
+                            <label for="">Bagian</label>
                             <select name="department_id" id="departId" class="form-control">
                                 <option value="">Select</option>
                                 <?php foreach ($department as $item) : ?>
@@ -221,7 +223,7 @@
                                     </select>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="">Divisi</label>
+                                    <label for="">Bagian</label>
                                     <select name="department_id" id="departId" class="form-control">
                                         <option value="">-- Pilih Divisi --</option>
                                     </select>

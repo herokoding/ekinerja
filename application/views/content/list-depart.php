@@ -3,7 +3,6 @@
     <!-- Content Header (Page header) -->
     <div class="content-header">
         <div class="container">
-            <?= form_error('menu_name', '<div class="alert alert-danger" role="alert">','</div>') ?>
             <?= $this->session->flashdata('message'); ?>
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -37,7 +36,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Department Name</th>
+                                        <th>Nama Bagian</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -45,7 +44,7 @@
                                 <tfoot>
                                     <tr>
                                         <th>#</th>
-                                        <th>Department Name</th>
+                                        <th>Nama Bagian</th>
                                         <th>Action</th>
                                     </tr>
                                 </tfoot>
@@ -63,17 +62,17 @@
         <div class="modal-content">
           <!-- Header -->
           <div class="modal-header">
-            <h5 class="modal-title" id="addDepartLabel">Tambah Department</h5>
+            <h5 class="modal-title" id="addDepartLabel">Tambah Bagian</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <!-- Body with Form -->
-          <form id="formAddRole" method="post" action="<?= site_url('admin/addDepart') ?>">
+          <form id="formAddRole" method="post" action="<?= site_url('admin/listDepart') ?>">
             <div class="modal-body">
               <div class="form-group">
-                <label for="menuName">Nama Department</label>
-                <input type="text" class="form-control" id="roleName" name="depart_name" placeholder="Masukkan nama role">
+                <label for="menuName">Nama Bagian</label>
+                <input type="text" class="form-control" id="roleName" name="depart_name" placeholder="Masukkan nama bagian">
               </div>
             </div>
             <!-- Footer with Actions -->
@@ -84,6 +83,56 @@
           </form>
         </div>
       </div>
+    </div>
+
+    <div class="modal fade" id="editDepart" tabindex="-1" role="dialog" aria-labelledby="editDepartLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <!-- Header -->
+          <div class="modal-header">
+            <h5 class="modal-title" id="editDepartLabel">Edit Bagian</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <!-- Body with Form -->
+          <form id="formEditDepart" action="">
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="menuName">Nama Bagian</label>
+                <input type="hidden" name="depart_id" id="departId">
+                <input type="text" class="form-control" id="departName" name="depart_name">
+              </div>
+            </div>
+            <!-- Footer with Actions -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-magenta btn-sm">Update</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Konfirmasi Hapus Bagian</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Anda yakin ingin menghapus Bagian <strong class="user-name"></strong>?</p>
+                    <p class="text-danger">Data yang dihapus tidak dapat dikembalikan!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Ya, Hapus</button>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- /.content -->
 </div>

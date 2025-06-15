@@ -45,11 +45,25 @@
   const API_GET_PERFORMANCE = "<?= site_url('kinerja/api/getListKinerja') ?>";
   const API_EDIT_PERFORMANCE = "<?= site_url('kinerja/api/editKinerja/') ?>";
   const API_EDIT_USER = "<?= site_url('admin/api/editUser/') ?>";
+  const API_EDIT_SUBMENU = "<?= site_url('admin/api/editSubMenu/') ?>";
   const API_EDIT_MENU = "<?= site_url('admin/api/editMenu/') ?>";
+  const API_EDIT_ROLE = "<?= site_url('admin/api/editRole/') ?>";
+  const API_EDIT_DEPART = "<?= site_url('admin/api/editDepart/') ?>";
+  const API_UPDATE_MENU = "<?= site_url('admin/api/updateMenu/') ?>";
+  const API_UPDATE_ROLE = "<?= site_url('admin/api/updateRole/') ?>";
+  const API_UPDATE_DEPART = "<?= site_url('admin/api/updateDepart/') ?>";
+  const API_UPDATE_SUBMENU = "<?= site_url('admin/api/updateSubMenu/') ?>";
   const API_UPDATE_USER = "<?= site_url('admin/api/updateUser/') ?>";
   const API_DELETE_USER = "<?= site_url('admin/api/deleteUser') ?>";
+  const API_DELETE_MENU = "<?= site_url('admin/api/deleteMenu') ?>";
+  const API_DELETE_ROLE = "<?= site_url('admin/api/deleteRole') ?>";
+  const API_DELETE_DEPART = "<?= site_url('admin/api/deleteDepart') ?>";
+  const API_DELETE_SUBMENU = "<?= site_url('admin/api/deleteSubMenu') ?>";
   const API_UPDATE_PERFORMANCE = "<?= site_url('kinerja/api/updateKinerja/') ?>";
+  const API_DELETE_PERFORMANCE = "<?= site_url('kinerja/api/deleteKinerja/') ?>";
   const API_APPROVAL = "<?= site_url('approval/api/getList') ?>";
+  const API_CHECK_ACCESS = "<?= site_url('admin/api/checkAccess') ?>";
+  const BASE_ADMIN_ROLE_ACCESS = '<?= base_url("admin/roleAccess/") ?>';
 </script>
 <script src="<?= base_url('assets/js/myScript.js') ?>"></script>
 </body>

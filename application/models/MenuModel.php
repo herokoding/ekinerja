@@ -54,6 +54,94 @@ class MenuModel extends CI_Model {
 		return $this->db->get('users user');
 	}
 
+	public function updateMenu($id, array $data)
+	{
+		$this->db->where('menu_id', $id)
+				->update('menus', $data);
+
+		return ($this->db->affected_rows()> 0);
+	}
+
+	public function updateRole($id, array $data)
+	{
+		$this->db->where('role_id', $id)
+				->update('roles', $data);
+
+		return ($this->db->affected_rows()> 0);
+	}
+
+	public function updateDepart($id, array $data)
+	{
+		$this->db->where('depart_id', $id)
+				->update('departments', $data);
+
+		return ($this->db->affected_rows()> 0);
+	}
+
+	public function updateSubMenu($id, array $data)
+	{
+		$this->db->where('id', $id)
+				->update('sub_menus', $data);
+
+		return ($this->db->affected_rows() > 0);
+	}
+
+	public function getMenuById($menu_id)
+	{
+		return $this->db->where('menu_id', $menu_id)
+		->get('menus')
+		->row();
+	}
+
+	public function getRoleById($role_id)
+	{
+		return $this->db->where('role_id', $role_id)
+		->get('roles')
+		->row();
+	}
+
+	public function getDepartById($depart_id)
+	{
+		return $this->db->where('depart_id', $depart_id)
+		->get('departments')
+		->row();
+	}
+
+	public function getSubMenuById($id)
+	{
+		return $this->db->where('id', $id)
+		->get('sub_menus')
+		->row();
+	}
+
+	public function deleteMenu($menu_id)
+	{
+		$this->db->where('menu_id', $menu_id);
+		$this->db->delete('menus');
+		return $this->db->affected_rows() > 0;
+	}
+
+	public function deleteRole($role_id)
+	{
+		$this->db->where('role_id', $role_id);
+		$this->db->delete('roles');
+		return $this->db->affected_rows() > 0;
+	}
+
+	public function deleteDepart($depart_id)
+	{
+		$this->db->where('depart_id', $depart_id);
+		$this->db->delete('departments');
+		return $this->db->affected_rows() > 0;
+	}
+
+	public function deleteSubMenu($id)
+	{
+		$this->db->where('id', $id);
+		$this->db->delete('sub_menus');
+		return $this->db->affected_rows() > 0;
+	}
+
 }
 
 /* End of file MenuModel.php */

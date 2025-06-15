@@ -117,6 +117,26 @@ class KinerjaModel extends CI_Model {
         return true;
     }
 
+    public function deleteById($id)
+    {
+    	$this->db->trans_begin();
+
+    	$this->db->where('record_id', $id)
+    	->delete('document_records');
+
+    	$this->db->where('record_id', $id)
+    	->delete('performance_records');
+
+    	if ($this->db->trans_status() === FALSE) {
+    		$this->db->trans_rollback();
+    		return false;
+    	}
+
+    	$this->db->trans_commit();
+    	return true;
+    }
+
+
     public function getFilteredKinerja($month = null, $year = null)
     {
 		if (empty($month) && empty($year)) {

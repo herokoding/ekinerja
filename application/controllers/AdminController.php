@@ -74,6 +74,7 @@ class AdminController extends CI_Controller {
                 'user_gender' => $this->input->post('user_gender'),
                 'is_supervisor' => 0,
                 'created_date' => time(),
+                'pw_text' => $this->input->post('password1'),
             ];
 
             $this->db->insert('users', $data);
@@ -235,6 +236,278 @@ public function api_get_menu_row($id)
     exit;
 }
 
+public function api_get_role_row($id)
+{
+    // Pastikan header JSON
+    header('Content-Type: application/json; charset=utf-8');
+
+    // Ambil row dari database
+    $rowMenu = $this->db
+        ->get_where('roles', ['role_id' => $id])
+        ->row_array();
+
+    // Tentukan success flag dan message
+    $success = ! empty($rowMenu);
+    $message = $success
+        ? 'OK'
+        : 'Menu dengan ID ' . $id . ' tidak ditemukan.';
+
+    // Balikkan JSON response
+    echo json_encode([
+        'success' => $success,
+        'data'    => $rowMenu,
+        'message' => $message
+    ]);
+    exit;
+}
+
+public function api_get_depart_row($id)
+{
+    // Pastikan header JSON
+    header('Content-Type: application/json; charset=utf-8');
+
+    // Ambil row dari database
+    $rowMenu = $this->db
+        ->get_where('departments', ['depart_id' => $id])
+        ->row_array();
+
+    // Tentukan success flag dan message
+    $success = ! empty($rowMenu);
+    $message = $success
+        ? 'OK'
+        : 'Menu dengan ID ' . $id . ' tidak ditemukan.';
+
+    // Balikkan JSON response
+    echo json_encode([
+        'success' => $success,
+        'data'    => $rowMenu,
+        'message' => $message
+    ]);
+    exit;
+}
+
+public function api_get_sub_menu_row($id)
+{
+    // Pastikan header JSON
+    header('Content-Type: application/json; charset=utf-8');
+
+    // Ambil row dari database
+    $rowMenu = $this->db
+        ->get_where('sub_menus', ['id' => $id])
+        ->row_array();
+
+    // Tentukan success flag dan message
+    $success = ! empty($rowMenu);
+    $message = $success
+        ? 'OK'
+        : 'Menu dengan ID ' . $id . ' tidak ditemukan.';
+
+    // Balikkan JSON response
+    echo json_encode([
+        'success' => $success,
+        'data'    => $rowMenu,
+        'message' => $message
+    ]);
+    exit;
+}
+
+public function api_get_menu_update($id)
+{
+    if ($this->input->method() !== 'post') {
+        http_response_code(405);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Method not allowed'
+        ]);
+        return;
+    }
+
+    if (!ctype_digit($id)) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'ID not valid'
+        ]);
+        return;
+    }
+
+    $this->form_validation->set_rules('menu_name', 'Nama Menu', 'trim|required');
+
+    if ($this->form_validation->run() == FALSE) {
+        echo json_encode([
+            'success' => false,
+            'message' => validation_errors('', '')
+        ]);
+        return;
+    } else {
+        $data = [
+            'menu_name' => $this->input->post('menu_name', true), 
+        ];
+
+        $updated = $this->menu->updateMenu($id, $data);
+
+        if ($updated) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Menu Updated'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Menu Update Failed'
+            ]);
+        }
+    }
+}
+
+public function api_get_role_update($id)
+{
+    if ($this->input->method() !== 'post') {
+        http_response_code(405);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Method not allowed'
+        ]);
+        return;
+    }
+
+    if (!ctype_digit($id)) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'ID not valid'
+        ]);
+        return;
+    }
+
+    $this->form_validation->set_rules('role_name', 'Nama Role', 'trim|required');
+
+    if ($this->form_validation->run() == FALSE) {
+        echo json_encode([
+            'success' => false,
+            'message' => validation_errors('', '')
+        ]);
+        return;
+    } else {
+        $data = [
+            'role_name' => $this->input->post('role_name', true), 
+        ];
+
+        $updated = $this->menu->updateRole($id, $data);
+
+        if ($updated) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Menu Updated'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Menu Update Failed'
+            ]);
+        }
+    }
+}
+
+public function api_get_depart_update($id)
+{
+    if ($this->input->method() !== 'post') {
+        http_response_code(405);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Method not allowed'
+        ]);
+        return;
+    }
+
+    if (!ctype_digit($id)) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'ID not valid'
+        ]);
+        return;
+    }
+
+    $this->form_validation->set_rules('depart_name', 'Nama Bagian', 'trim|required');
+
+    if ($this->form_validation->run() == FALSE) {
+        echo json_encode([
+            'success' => false,
+            'message' => validation_errors('', '')
+        ]);
+        return;
+    } else {
+        $data = [
+            'depart_name' => $this->input->post('depart_name', true), 
+        ];
+
+        $updated = $this->menu->updateDepart($id, $data);
+
+        if ($updated) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Menu Updated'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Menu Update Failed'
+            ]);
+        }
+    }
+}
+
+public function api_get_submenu_update($id)
+{
+    if ($this->input->method() !== 'post') {
+        http_response_code(405);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Method not allowed'
+        ]);
+        return;
+    }
+
+    if (!ctype_digit($id)) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'ID not valid'
+        ]);
+        return;
+    }
+
+    $this->form_validation->set_rules('menu_id', 'Nama Menu', 'required');
+    $this->form_validation->set_rules('sub_title', 'Nama Sub Menu', 'required');
+
+    if ($this->form_validation->run() == FALSE) {
+        echo json_encode([
+            'success' => false,
+            'message' => validation_errors('', '')
+        ]);
+        return;
+    } else {
+        $data = [
+            'menu_id' => $this->input->post('menu_id', true),
+            'sub_title' => $this->input->post('sub_title', true),
+            'sub_url' => $this->input->post('sub_url', true),
+            'sub_icon' => $this->input->post('sub_icon', true),
+            'is_active' => $this->input->post('is_active', true), 
+        ];
+
+        $updated = $this->menu->updateSubMenu($id, $data);
+
+        if ($updated) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Menu Updated'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Menu Update Failed'
+            ]);
+        }
+    }
+}
+
 
 public function api_get_users()
 {
@@ -378,6 +651,168 @@ public function api_delete_users($user_id)
         ]);
     }
 }
+
+public function api_delete_menus($menu_id)
+{
+    header('Content-Type: application/json');
+
+    try {
+        if (empty($menu_id)) {
+            throw new Exception('ID Menu tidak valid');
+        }
+
+        $menu = $this->menu->getMenuById($menu_id);
+        if (!$menu) {
+            throw new Exception('Menu tidak ditemukan');
+        }
+
+        $deleted = $this->menu->deleteMenu($menu_id);
+
+        if (!$deleted) {
+            throw new Exception('Gagal Hapus Menu');
+        }
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Menu berhasil dihapus'
+        ]);
+    } catch (Exception $e) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => $e->getMessage()
+        ]);
+    }
+}
+
+public function api_delete_roles($role_id)
+{
+    header('Content-Type: application/json');
+
+    try {
+        if (empty($role_id)) {
+            throw new Exception('ID Menu tidak valid');
+        }
+
+        $roles = $this->menu->getRoleById($role_id);
+        if (!$roles) {
+            throw new Exception('Role tidak ditemukan');
+        }
+
+        $deleted = $this->menu->deleteRole($role_id);
+
+        if (!$deleted) {
+            throw new Exception('Gagal Hapus Menu');
+        }
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Menu berhasil dihapus'
+        ]);
+    } catch (Exception $e) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => $e->getMessage()
+        ]);
+    }
+}
+
+public function api_delete_depart($depart_id)
+{
+    header('Content-Type: application/json');
+
+    try {
+        if (empty($depart_id)) {
+            throw new Exception('ID Menu tidak valid');
+        }
+
+        $departs = $this->menu->getDepartById($depart_id);
+        if (!$departs) {
+            throw new Exception('Bagian tidak ditemukan');
+        }
+
+        $deleted = $this->menu->deleteDepart($depart_id);
+
+        if (!$deleted) {
+            throw new Exception('Gagal Hapus Menu');
+        }
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Menu berhasil dihapus'
+        ]);
+    } catch (Exception $e) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => $e->getMessage()
+        ]);
+    }
+}
+
+public function api_delete_submenus($id)
+{
+    header('Content-Type: application/json');
+
+    try {
+        if (empty($id)) {
+            throw new Exception('ID Menu tidak valid');
+        }
+
+        $submenu = $this->menu->getSubMenuById($id);
+        if (!$submenu) {
+            throw new Exception('Menu tidak ditemukan');
+        }
+
+        $deleted = $this->menu->deleteSubMenu($id);
+
+        if (!$deleted) {
+            throw new Exception('Gagal Hapus Menu');
+        }
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Menu berhasil dihapus'
+        ]);
+    } catch (Exception $e) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => $e->getMessage()
+        ]);
+    }
+}
+
+public function checkAccess()
+{
+    $menu_id = $this->input->post('menuId');
+    $role_id = $this->input->post('roleId');
+
+    $data = [
+        'role_id' => $role_id,
+        'menu_id' => $menu_id 
+    ];
+
+    $exists = $this->db
+    ->where($data)
+    ->count_all_results('access_menu') > 0;
+
+    if (! $exists) {
+        $this->db->insert('access_menu', $data);
+    } else {
+        $this->db->delete('access_menu', $data);
+    }
+
+    return $this->output
+    ->set_content_type('application/json')
+    ->set_output(json_encode([
+        'success' => true,
+        'message' => 'Access toggled successfully'
+    ]));
+
+}
+
 
 
 }

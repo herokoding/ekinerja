@@ -29,6 +29,7 @@
                             <h3 class="card-title">Data Access Role</h3>
                         </div>
                         <div class="card-body">
+                            <h5>Role : <?= $role['role_name'] ?></h5>
                             <table id="tblAccess" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
@@ -44,7 +45,9 @@
                                             <td><?= $i++ ?></td>
                                             <td><?= $row['menu_name'] ?></td>
                                             <td>
-                                                
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" <?= check_access($role['role_id'], $row['menu_id']) ?> data-role="<?= $role['role_id'] ?>" data-menu="<?= $row['menu_id'] ?>">
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach ?>

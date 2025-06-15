@@ -117,6 +117,77 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="editSubMenu" tabindex="-1" role="dialog" aria-labelledby="editSubMenuLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <!-- Header -->
+          <div class="modal-header">
+            <h5 class="modal-title" id="editSubMenuLabel">Edit Sub Menu</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <!-- Body with Form -->
+          <form id="formEditSubMenu" action="">
+            <div class="modal-body">
+              <div class="form-group">
+                <input type="hidden" name="id" id="submenuId">
+                <label for="subTitle">Nama Sub Menu</label>
+                <input type="text" class="form-control <?= form_error('sub_title') ? 'is-invalid' : '' ?>" id="subTitle" name="sub_title">
+                <?= form_error('sub_title', '<div class="invalid-feedback">', '</div>') ?>
+              </div>
+              <div class="form-group">
+                  <label for="">Nama Menu</label>
+                  <select name="menu_id" id="menuId" class="form-control">
+                      <option value="">Select</option>
+                  </select>
+              </div>
+              <div class="form-group">
+                  <label for="">Sub Menu Url</label>
+                  <input type="text" class="form-control" id="subUrl" name="sub_url">
+              </div>
+              <div class="form-group">
+                  <label for="">Sub Icon</label>
+                  <input type="text" class="form-control" id="subIcon" name="sub_icon">
+              </div>
+              <div class="form-group">
+                  <div class="form-check">
+                      <input type="checkbox" class="form-check-input" value="1" name="is_active" id="is_active" checked>
+                      <label for="is_active" class="form-check-label">Active?</label>
+                  </div>
+              </div>
+            </div>
+            <!-- Footer with Actions -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-magenta btn-sm">Update</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Konfirmasi Hapus Sub Menu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Anda yakin ingin menghapus Sub Menu <strong class="user-name"></strong>?</p>
+                    <p class="text-danger">Data yang dihapus tidak dapat dikembalikan!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Ya, Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- /.content -->
 </div>
         <!-- /.content-wrapper -->

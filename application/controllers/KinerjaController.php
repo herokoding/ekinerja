@@ -302,6 +302,55 @@ class KinerjaController extends CI_Controller {
 		->set_output(json_encode($response));
 	}
 
+	public function api_delete_kinerja($id)
+	{
+		if (!is_numeric($id)) {
+			log_message('error', "Invalid ID for delete: $id");
+			return $this->output
+			->set_content_type('application/json')
+			->set_output(json_encode([
+				'success' => false,
+				'message' => 'ID tidak valid'
+			]));
+		}
+
+		$row = $this->kinerja->getRowById($id);
+		if (!$row) {
+			log_message('debug', "No existing record for ID: $id");
+			return $this->output
+			->set_content_type('application/json')
+			->set_output(json_encode([
+				'success' => false,
+				'message' => 'Data tidak ditemukan'
+			]));
+		}
+
+		if (!empty($row['document_name'])) {
+			$file = FCPATH . 'uploads/kinerja/' . $row['document_name'];
+			if (file_exists($file)) {
+				if (unlink($file)) {
+					log_message('debug', "Old file deleted: {$row['document_name']}");
+				} else {
+					log_message('error', "Failed to delete file: {$row['document_name']}");
+				}
+			}
+		}
+
+		$deleted = $this->kinerja->deleteById($id);  
+		log_message('debug', "Model deleteById returned: " . ($deleted ? 'true' : 'false'));
+
+		if ($deleted) {
+			$response = ['success' => true, 'message' => 'Data berhasil dihapus'];
+		} else {
+			$response = ['success' => false, 'message' => 'Gagal menghapus data'];
+		}
+
+		return $this->output
+		->set_content_type('application/json')
+		->set_output(json_encode($response));
+	}
+
+
 
 }
 

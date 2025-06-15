@@ -10,10 +10,23 @@ $route['admin/api/editUser/(:num)']['get'] = 'AdminController/api_get_row_users/
 $route['admin/api/updateUser/(:num)']['post'] = 'AdminController/api_update_users/$1';
 $route['admin/api/deleteUser/(:num)']['delete'] = 'AdminController/api_delete_users/$1';
 $route['admin/api/editMenu/(:num)']['get'] = 'AdminController/api_get_menu_row/$1';
+$route['admin/api/editRole/(:num)']['get'] = 'AdminController/api_get_role_row/$1';
+$route['admin/api/editDepart/(:num)']['get'] = 'AdminController/api_get_depart_row/$1';
+$route['admin/api/updateMenu/(:num)']['post'] = 'AdminController/api_get_menu_update/$1';
+$route['admin/api/updateRole/(:num)']['post'] = 'AdminController/api_get_role_update/$1';
+$route['admin/api/updateDepart/(:num)']['post'] = 'AdminController/api_get_depart_update/$1';
+$route['admin/api/updateSubMenu/(:num)']['post'] = 'AdminController/api_get_submenu_update/$1';
+$route['admin/api/deleteMenu/(:num)']['delete'] = 'AdminController/api_delete_menus/$1';
+$route['admin/api/deleteRole/(:num)']['delete'] = 'AdminController/api_delete_roles/$1';
+$route['admin/api/deleteDepart/(:num)']['delete'] = 'AdminController/api_delete_depart/$1';
+$route['admin/api/deleteSubMenu/(:num)']['delete'] = 'AdminController/api_delete_submenus/$1';
+$route['admin/api/editSubMenu/(:num)']['get'] = 'AdminController/api_get_sub_menu_row/$1';
+$route['admin/api/checkAccess'] = 'AdminController/checkAccess';
 
 $route['kinerja/api/getListKinerja']['get'] = 'KinerjaController/api_get_lists';
 $route['kinerja/api/editKinerja/(:num)']['get'] = 'KinerjaController/api_get_row_kinerja/$1';
 $route['kinerja/api/updateKinerja/(:num)']['post'] = 'KinerjaController/api_update_kinerja/$1';
+$route['kinerja/api/deleteKinerja/(:num)']['delete'] = 'KinerjaController/api_delete_kinerja/$1';
 
 $route['approval/api/getList'] = 'ApprovalController/api_get_lists';
 
@@ -28,7 +41,7 @@ $route['admin/addMenu']['post'] = 'AdminController/listMenu';
 $route['admin/addSubMenu']['post'] = 'AdminController/listSubMenu';
 $route['admin/addRole']['post'] = 'AdminController/listRole';
 $route['admin/addUser']['post'] = 'AdminController/listUser';
-$route['admin/roleAccess/(:num)'] = 'AdminController/roleAccess/$1';
+$route['admin/roleAccess/(:num)']['get'] = 'AdminController/roleAccess/$1';
 
 // Kinerja Routes
 $route['kinerja/listKinerja'] = 'KinerjaController/index';
