@@ -32,12 +32,28 @@ class ConfigController extends CI_Controller {
 			'title' => "Profile Page",
 			'userRow' => $this->config_model->getUser($this->session->userdata('user_id'))->row_array(),
 			'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
+			'roles' => $this->db->get('roles')->result_array(),
+			'departments' => $this->db->get('departments')->result_array(),
 		);
 
 		$this->load->view('main/header', $data, FALSE);
 		$this->load->view('main/navbar', $data, FALSE);
 		$this->load->view('content/profile', $data, FALSE);
 		$this->load->view('main/footer');
+	}
+
+	public function updateProfile()
+	{
+		$this->config_model->updateProfile();
+
+		redirect('user/show-profile', 'refresh');
+	}
+
+	public function updatePassword() 
+	{
+		$this->config_model->updatePassword();
+
+		redirect('user/show-profile', 'refresh');
 	}
 
 }

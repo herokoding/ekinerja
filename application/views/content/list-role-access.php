@@ -46,7 +46,7 @@
                                             <td><?= $row['menu_name'] ?></td>
                                             <td>
                                                 <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" <?= check_access($role['role_id'], $row['menu_id']) ?> data-role="<?= $role['role_id'] ?>" data-menu="<?= $row['menu_id'] ?>">
+                                                    <input type="checkbox" class="form-check-input-role" <?= check_access($role['role_id'], $row['menu_id']) ?> data-role="<?= $role['role_id'] ?>" data-menu="<?= $row['menu_id'] ?>">
                                                 </div>
                                             </td>
                                         </tr>

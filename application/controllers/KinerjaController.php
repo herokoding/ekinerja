@@ -50,6 +50,7 @@ class KinerjaController extends CI_Controller {
 				date_default_timezone_set('Asia/Jakarta');
 				$post = [
 					'user_id' => $this->session->userdata('user_id'),
+					'depart_id' => $this->session->userdata('department_id'),
 					'record_date' => $this->input->post('record_date'),
 					'record_status' => 0,
 					'record_desc' => $this->input->post('record_desc'),

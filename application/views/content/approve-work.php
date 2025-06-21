@@ -27,21 +27,29 @@
                 <div class="col-md-12">
                     <form action="" method="get" id="approveForm">
                         <div class="form-row align-items-center">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <select name="month" id="month" class="form-control">
                                     <option value="">Pilih Bulan</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <select name="year" id="year" class="form-control">
                                     <option value="">Pilih Tahun</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <select name="user" id="user" class="form-control">
                                     <option value="">Pilih Pegawai</option>
                                     <?php foreach ($listUser as $items) : ?>
                                         <option value="<?= $items['user_id'] ?>" <?= ($this->input->get('user') === $items['user_id'] ) ? 'selected' : '' ?> ><?= $items['user_fullname'] ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select name="department" id="department" class="form-control">
+                                    <option value="">Pilih Bagian</option>
+                                    <?php foreach ($listDepart as $items) : ?>
+                                        <option value="<?= $items['depart_id'] ?>" <?= ($this->input->get('department') === $items['depart_id']) ? 'selected' : '' ?>><?= $items['depart_name'] ?></option>
                                     <?php endforeach ?>
                                 </select>
                             </div>

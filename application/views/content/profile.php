@@ -20,6 +20,7 @@
 
     <!-- Main content -->
     <div class="content">
+      <?=  $this->session->flashdata('message'); ?>
         <div class="container emp-profile">
             <div class="row">
                 <div class="col-md-3">
@@ -127,25 +128,48 @@
 <div class="modal fade" id="modalEditProfile" tabindex="-1" aria-labelledby="modalEditProfileLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form action="<?= base_url('user/update_profile') ?>" method="post">
+      <form action="<?= base_url('user/update-profile') ?>" method="post">
         <div class="modal-header">
           <h5 class="modal-title" id="modalEditProfileLabel">Edit Profile</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <!-- Contoh field form edit profile -->
+          <input type="hidden" name="id" value="<?= $userRow['user_id'] ?>">
+          <div class="mb-3">
+            <label for="edit-username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="edit-username" name="username" value="<?= $userRow['username'] ?>">
+          </div>
           <div class="mb-3">
             <label for="edit-name" class="form-label">Nama Lengkap</label>
-            <input type="text" class="form-control" id="edit-name" name="name" value="<?= $user['name'] ?>">
+            <input type="text" class="form-control" id="edit-name" name="user_fullname" value="<?= $userRow['user_fullname'] ?>">
           </div>
           <div class="mb-3">
             <label for="edit-email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="edit-email" name="email" value="<?= $user['email'] ?>">
+            <input type="email" class="form-control" id="edit-email" name="user_email" value="<?= $userRow['user_email'] ?>">
+          </div>
+          <div class="mb-3">
+            <label for="edit-role" class="form-label">Jabatan</label>
+            <select class="form-control" id="edit-role" name="role_id">
+              <option value="">-- Pilih Jabatan --"></option>
+              <?php foreach ($roles as $item) : ?>
+                <option value="<?= $item['role_id'] ?>" <?=  $item['role_id'] == $userRow['role_id'] ? 'selected' : '' ?>><?= $item['role_name'] ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="edit-department" class="form-label">Bagian</label>
+            <select class="form-control" id="edit-department" name="department_id">
+              <option value="">-- Pilih Divisi --"></option>
+              <?php foreach ($departments as $item) : ?>
+                <option value="<?= $item['depart_id'] ?>" <?=  $item['depart_id'] == $userRow['department_id'] ? 'selected' : '' ?>><?= $item['depart_name'] ?></option>
+              <?php endforeach; ?>
+            </select>
           </div>
           <!-- Tambahkan field lain sesuai kebutuhan -->
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Batal</button>
           <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
         </div>
       </form>
@@ -157,10 +181,10 @@
 <div class="modal fade" id="modalChangePassword" tabindex="-1" aria-labelledby="modalChangePasswordLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form action="<?= base_url('user/change_password') ?>" method="post">
+      <form action="<?= base_url('user/update-password') ?>" method="post">
         <div class="modal-header">
           <h5 class="modal-title" id="modalChangePasswordLabel">Ubah Password</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <!-- Field form ubah password -->
@@ -178,7 +202,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Batal</button>
           <button type="submit" class="btn btn-success">Ubah Password</button>
         </div>
       </form>

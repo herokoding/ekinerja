@@ -20,18 +20,21 @@ class KinerjaModel extends CI_Model {
 		return $this->db->get('performance_records perform');
 	}
 
-	public function getApprove($month = null, $year = null, $user = null)
+	public function getApprove($month = null, $year = null, $user = null, $depart = null)
 	{
 		if (empty($month) && empty($year) && empty($user)) {
 			$month = date('m');
 			$year = date('Y');
 			$user = "";
+			$depart = "";
 		}
 
-		$this->db->select('perform.*, doc.*, user.user_fullname');
+		$this->db->select('perform.*, doc.*, user.user_fullname, depart.depart_name');
 		$this->db->join('document_records doc', 'doc.record_id = perform.record_id', 'left');
 		$this->db->join('users user', 'user.user_id = perform.user_id', 'left');
+		$this->db->join('departments depart', 'depart.depart_id = user.department_id', 'left');
 		$this->db->where('perform.user_id', $user);
+		$this->db->where('perform.depart_id', $depart);
 		$this->db->where('MONTH(perform.record_date)', $month);
 		$this->db->where('YEAR(perform.record_date)', $year);
 		$this->db->order_by('perform.record_id', 'asc');

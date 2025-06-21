@@ -60,3 +60,5 @@ $route['auth/blocked'] = 'AuthController/blocked';
 
 // Config Routes
 $route['user/show-profile'] = 'ConfigController/showProfile';
+$route['user/update-profile'] = 'ConfigController/updateProfile';
+$route['user/update-password'] = 'ConfigController/updatePassword';

@@ -37,6 +37,7 @@ class ApprovalController extends CI_Controller {
 			'queryMenu' => $this->menu->getAccessMenu($this->session->userdata('role_id'))->result_array(),
 			'kinerjaList' => $this->kinerja->getLists($month, $year)->result_array(),
 			'listUser' => $this->db->get_where('users', ['is_supervisor' => 0])->result_array(),
+			'listDepart' => $this->db->get('departments')->result_array(),
 			'month' => $month,
 			'year' => $year,
 			'user' => $user,
@@ -73,8 +74,9 @@ class ApprovalController extends CI_Controller {
 		$month = $this->input->get('month') ?? date('m');
 		$year = $this->input->get('year') ?? date('Y');
 		$user = $this->input->get('user');
+		$department = $this->input->get('department');
 
-		$listApprove = $this->kinerja->getApprove($month, $year, $user)->result_array();
+		$listApprove = $this->kinerja->getApprove($month, $year, $user, $department)->result_array();
 
 		$this->output
 		->set_content_type('application/json')
