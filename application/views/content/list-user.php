@@ -229,6 +229,32 @@
                                     </select>
                                 </div>
                                 <div class="form-group row">
+                                    <label for="">Status Aktif</label>
+                                    <div class="col-sm-12">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" name="user_is_active" id="userIsActive" value="1" checked>
+                                            <label class="form-check-label" for="userIsActive">Aktif</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" name="user_is_active" id="userIsNotActive" value="0">
+                                            <label class="form-check-label" for="userIsNotActive">Tidak Aktif</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="">Ubah Status Kepala Bagian?</label>
+                                    <div class="col-sm-12">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="is_supervisor" id="isSupervisorYes" value="1">
+                                            <label class="form-check-label" for="isSupervisorYes">Ya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="is_supervisor" id="isSupervisorNo" value="0" checked>
+                                            <label class="form-check-label" for="isSupervisorNo">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <label>Ubah Password?</label>
                                     <div class="col-sm-12">
                                         <div class="form-check form-check-inline">

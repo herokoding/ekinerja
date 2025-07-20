@@ -20,7 +20,7 @@ class KinerjaModel extends CI_Model {
 		return $this->db->get('performance_records perform');
 	}
 
-	public function getApprove($month = null, $year = null, $user = null, $depart = null)
+	public function getApprove($month, $year, $user, $depart)
 	{
 		if (empty($month) && empty($year) && empty($user)) {
 			$month = date('m');
@@ -33,13 +33,14 @@ class KinerjaModel extends CI_Model {
 		$this->db->join('document_records doc', 'doc.record_id = perform.record_id', 'left');
 		$this->db->join('users user', 'user.user_id = perform.user_id', 'left');
 		$this->db->join('departments depart', 'depart.depart_id = user.department_id', 'left');
-		$this->db->where('perform.user_id', $user);
-		$this->db->where('perform.depart_id', $depart);
+		$this->db->where('user.user_id', $user);
+		$this->db->where('depart.depart_id', $depart);
 		$this->db->where('MONTH(perform.record_date)', $month);
 		$this->db->where('YEAR(perform.record_date)', $year);
 		$this->db->order_by('perform.record_id', 'asc');
 
 		return $this->db->get('performance_records perform');
+
 	}
 
 	public function getGroupedData($month = null, $year = null)

@@ -871,6 +871,18 @@ $(function () {
 				$form.find('#userEmail').val(userData.user_email);
 				$form.find('#userName').val(userData.username);
 
+				if (userData.is_supervisor == 1) {
+					$form.find('input[name="is_supervisor"][value="1"]').prop('checked', true);
+				} else if (userData.is_supervisor == 0) {
+					$form.find('input[name="is_supervisor"][value="0"]').prop('checked', true);
+				}
+
+				if (userData.user_is_active == 1) {
+					$form.find('input[name="user_is_active"][value="1"]').prop('checked', true);
+				} else if (userData.user_is_active == 0) {
+					$form.find('input[name="user_is_active"][value="0"]').prop('checked', true);
+				}
+
 				if (userData.user_gender) {
 					$form.find(`input[name="user_gender"][value="${userData.user_gender}"]`).prop('checked', true);
 				}
@@ -1288,6 +1300,7 @@ $(function () {
 						month: $('#month').val() || currentMonth,
 						year: $('#year').val() || currentYear,
 						user: $('#user').val(),
+						department: $('#department').val()
 					};
 				},
 				dataSrc: function(json) {
@@ -1343,7 +1356,7 @@ $(function () {
        		onclick="return confirm('Approve kinerja ini?')">
        		Approve
     		</a>
-    		<a href="${baseUrl}approval/updateStatus/${row.record_id}/2" class="btn btn-sm btn-danger"
+    		<a href="updateStatus/${row.record_id}/2" class="btn btn-sm btn-danger"
        		onclick="return confirm('Reject kinerja ini?')">
        		Reject
 				</a>`

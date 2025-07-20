@@ -592,7 +592,9 @@ public function api_update_users($user_id)
         'user_gender'    => $input['user_gender'] ?? '',
         'role_id'        => $input['role_id'] ?? 0,
         'department_id'  => $input['department_id'] ?? 0,
-        'user_is_active' => $input['user_is_active'] ?? 0
+        'user_is_active' => $input['user_is_active'] ?? 0,
+        'is_supervisor'  => $input['is_supervisor'] ?? 0,
+        'modified_date'   => time(),
     ];
 
     if (!empty($input['change_password']) && $input['change_password'] == '1') {
